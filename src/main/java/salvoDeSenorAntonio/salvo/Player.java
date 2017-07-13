@@ -1,9 +1,9 @@
 package salvoDeSenorAntonio.salvo;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Anton on 10.07.2017.
@@ -17,14 +17,27 @@ public class Player {
     private String lastName;
     private String userName;
 
+    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    private Set<GamePlayer> gamePlayers = new HashSet<>();
+
 
     public Player() {
+
     }
 
     public Player(String inputFirstName, String inputLastname, String inputUserName) {
         firstName = inputFirstName;
         lastName = inputLastname;
         userName = inputUserName;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void addGamePlayer(GamePlayer inputGamePlayer){
+        gamePlayers.add(inputGamePlayer);
+
     }
 
     public String getFirstName() {
@@ -49,5 +62,13 @@ public class Player {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Set<GamePlayer> getGamePlayers() {
+        return gamePlayers;
+    }
+
+    public void setGamePlayers(Set<GamePlayer> gamePlayers) {
+        this.gamePlayers = gamePlayers;
     }
 }
