@@ -1,8 +1,7 @@
-package salvoDeSenorAntonio.salvo;
+package project.salvo.game;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,8 +24,8 @@ public class Player {
 
     }
 
-    public Player(String inputFirstName, String inputLastname, String inputUserName) {
-        firstName = inputFirstName;
+    public Player(String firstName, String inputLastname, String inputUserName) {
+        this.firstName = firstName;
         lastName = inputLastname;
         userName = inputUserName;
     }

@@ -10,7 +10,7 @@ $(function() {
   // load and display JSON sent by server for /players
 
   function loadData() {
-    $.get("http://localhost:8080/players")
+    $.get("/players")
     .done(function(data) {
       showOutput(JSON.stringify(data, null, 2));
     })
@@ -37,7 +37,7 @@ $(function() {
           'Content-Type': 'application/json'
       },
       dataType: "text",
-      url: "http://localhost:8080/players",
+      url: "/players",
       data: JSON.stringify({ "userName": userName })
     })
     .done(function( ) {

@@ -1,10 +1,13 @@
-package salvoDeSenorAntonio.salvo;
+package project.salvo.game;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by Anton on 13.07.2017.
@@ -15,30 +18,44 @@ import java.util.*;
 public class SalvoController {
     @Autowired
     private GameRepository gameRepository;
+    @Autowired
+    private GamePlayerRepository gamePlayerRepository;
 
     @RequestMapping("/games")
     public List<Object> getGames () {
-        List<Object> returnDto = new ArrayList<>();
-        List<Game> myList = gameRepository.findAll();
-        for (int i = 0; i<myList.size(); i++) {
-            Game game = myList.get(i);
-            returnDto.add(makeGameDTO(game));
-        }
+        List<Object> returnDto = gameRepository
+                .findAll()
+                .stream()
+                .map(g -> makeGameDTO(g))
+                .collect(toList());
         return  returnDto;
     }
+
+
+    @RequestMapping("/game_view/{gamePlayerId}")
+    public  Map<String, Object> gameView (@PathVariable long gamePlayerId) {
+        Map<String,Object> toReturn = new LinkedHashMap<>();
+        List<Object> gamePlayers = new ArrayList<>();
+        GamePlayer currentGamePlayer = gamePlayerRepository.findOne(gamePlayerId);
+
+        toReturn.put("Id", currentGamePlayer.getGame().getGameId());
+        toReturn.put("Creation date", currentGamePlayer.getGame().getGameCreationDate());
+
+        for (GamePlayer gp : currentGamePlayer.getGame().getGamePlayers()) {
+            gamePlayers.add(makeGamePlayerDto(gp));
+        }
+
+        toReturn.put("Game Players", gamePlayers);
+        return toReturn;
+    }
+
 
     private Map<String, Object> makeGameDTO(Game game) {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", game.getGameId());
         dto.put("date", game.getDate());
-
-        List<Object> gamePlayerDtos = new ArrayList<>();
         List<GamePlayer> gamePlayers = new ArrayList<>(game.getGamePlayers());
-        for (int i = 0; i< gamePlayers.size(); i++) {
-            GamePlayer currentGamePlayer = gamePlayers.get(i);
-            Map<String, Object> currentGamePlayerDto = makeGamePlayerDto(currentGamePlayer);
-            gamePlayerDtos.add(currentGamePlayerDto);
-        }
+        List<Object> gamePlayerDtos = gamePlayers.stream().map(gp -> makeGamePlayerDto(gp)).collect(toList());
         dto.put("gamePlayers", gamePlayerDtos);
         return dto;
     }
