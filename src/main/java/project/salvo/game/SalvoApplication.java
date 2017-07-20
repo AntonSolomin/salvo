@@ -50,8 +50,11 @@ public class SalvoApplication {
 
             GamePlayer gameTwoPlayerOne = new GamePlayer(p1, mySecondGame);
             GamePlayer gameTwoPlayerTwo = new GamePlayer(p2, mySecondGame);
+            GamePlayer gameThreePlayerOne = new GamePlayer(p5, myThirdGame);
+
             gamePlayerRepository.save(gameTwoPlayerOne);
             gamePlayerRepository.save(gameTwoPlayerTwo);
+            gamePlayerRepository.save(gameThreePlayerOne);
 
             Ship s1 = new Ship(gameTwoPlayerOne,  new ArrayList<>(Arrays.asList("A2", "B2", "C2")), Ship.ShipClass.DESTROYER);
             shipRepository.save(s1);
@@ -59,6 +62,11 @@ public class SalvoApplication {
             Ship s2 = new Ship(gameTwoPlayerOne,  new ArrayList<>(Arrays.asList("C3", "C4", "C5")), Ship.ShipClass.SUBMARINE);
             shipRepository.save(s2);
 
+            Ship s3 = new Ship(gameTwoPlayerTwo,  new ArrayList<>(Arrays.asList("D7", "E7", "F7")), Ship.ShipClass.SUBMARINE);
+            shipRepository.save(s3);
+
+            Ship s4 = new Ship(gameThreePlayerOne,  new ArrayList<>(Arrays.asList("A1", "A2", "A3")), Ship.ShipClass.SUBMARINE);
+            shipRepository.save(s4);
         };
     }
 }

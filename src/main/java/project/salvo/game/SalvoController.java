@@ -36,16 +36,21 @@ public class SalvoController {
     public  Map<String, Object> gameView (@PathVariable long gamePlayerId) {
         Map<String,Object> toReturn = new LinkedHashMap<>();
         List<Object> gamePlayers = new ArrayList<>();
+        List<Object> locations = new ArrayList<>();
         GamePlayer currentGamePlayer = gamePlayerRepository.findOne(gamePlayerId);
 
-        toReturn.put("Id", currentGamePlayer.getGame().getGameId());
-        toReturn.put("Creation date", currentGamePlayer.getGame().getGameCreationDate());
+        toReturn.put("id", currentGamePlayer.getGame().getGameId());
+        toReturn.put("creation_date", currentGamePlayer.getGame().getGameCreationDate());
 
         for (GamePlayer gp : currentGamePlayer.getGame().getGamePlayers()) {
             gamePlayers.add(makeGamePlayerDto(gp));
         }
+        for (Ship sp : currentGamePlayer.getShips()) {
+            locations.add(makeShipDto(sp));
+        }
 
-        toReturn.put("Game Players", gamePlayers);
+        toReturn.put("game_players", gamePlayers);
+        toReturn.put("ships", locations);
         return toReturn;
     }
 
@@ -71,6 +76,13 @@ public class SalvoController {
         Map<String, Object> playerDto = new LinkedHashMap<>();
         playerDto.put("id", player.getUserId());
         playerDto.put("email", player.getUserName());
-        return  playerDto;
+        return playerDto;
+    }
+
+    private Map<String,Object> makeShipDto (Ship ship) {
+        Map<String,Object> shipDto = new LinkedHashMap<>();
+        shipDto.put("type", ship.getShipClass());
+        shipDto.put("locations", ship.getLocations());
+        return shipDto;
     }
 }
