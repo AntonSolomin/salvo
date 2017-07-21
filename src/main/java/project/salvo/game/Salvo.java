@@ -1,0 +1,61 @@
+package project.salvo.game;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by Anton on 20.07.2017.
+ */
+@Entity
+public class Salvo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long salvoId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "gamePlayer_id")
+    private GamePlayer gamePlayer;
+
+    private long turnNumber = 1;
+
+    @ElementCollection
+    @Column(name = "shotLocations")
+    private List<String> shotLocations = new ArrayList<>();
+
+    public Salvo() {}
+    public Salvo(GamePlayer gamePlayer, List<String> shotLocations) {
+        this.gamePlayer = gamePlayer;
+        gamePlayer.addSalvo(this);
+        this.shotLocations = shotLocations;
+    }
+
+    public GamePlayer getGamePlayer() {
+        return gamePlayer;
+    }
+
+    public void setGamePlayer(GamePlayer gamePlayer) {
+        this.gamePlayer = gamePlayer;
+    }
+
+    public List<String> getShotLocations() {
+        return shotLocations;
+    }
+
+    public void setShotLocations(List<String> shotLocations) {
+        this.shotLocations = shotLocations;
+    }
+
+    public void nextTurn() {
+        this.turnNumber ++;
+    }
+
+    public long getTurnNumber() {
+        return turnNumber;
+    }
+
+    public void setTurnNumber(long turnNumber) {
+        this.turnNumber = turnNumber;
+    }
+}

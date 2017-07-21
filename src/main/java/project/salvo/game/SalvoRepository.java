@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 /**
- * Created by Anton on 18.07.2017.
+ * Created by Anton on 20.07.2017.
  */
 @RepositoryRestResource
-public interface ShipRepository extends JpaRepository<Ship, Long>{}
+public interface SalvoRepository extends JpaRepository<Salvo, Long> {}

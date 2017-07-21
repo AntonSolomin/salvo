@@ -21,7 +21,8 @@ public class SalvoApplication {
     public CommandLineRunner initData(PlayerRepository playerRepository,
                                       GameRepository gameRepository,
                                       GamePlayerRepository gamePlayerRepository,
-                                      ShipRepository shipRepository) {
+                                      ShipRepository shipRepository,
+                                      SalvoRepository salvoRepository) {
         return (args) -> {
             Player p1 = new Player("Jack", "Bauer", "1@gmail.com");
             Player p2 = new Player("Chloe", "O'Brian", "2@gmail.com");
@@ -67,6 +68,9 @@ public class SalvoApplication {
 
             Ship s4 = new Ship(gameThreePlayerOne,  new ArrayList<>(Arrays.asList("A1", "A2", "A3")), Ship.ShipClass.SUBMARINE);
             shipRepository.save(s4);
+
+            Salvo newSalvo = new Salvo(gameTwoPlayerOne, new ArrayList<>(Arrays.asList("A1", "A2", "A4")));
+            salvoRepository.save(newSalvo);
         };
     }
 }
