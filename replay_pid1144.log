@@ -1,0 +1,9 @@
+JvmtiExport can_access_local_variables 0
+JvmtiExport can_hotswap_or_post_breakpoint 0
+JvmtiExport can_post_on_exceptions 0
+# 296 ciObject found
+instanceKlass org/hibernate/engine/jdbc/env/internal/ExtractedDatabaseMetaDataImpl$Builder
+instanceKlass org/hibernate/engine/jdbc/spi/SqlExceptionHelper$WarningHandlerLoggingSupport
+instanceKlass org/hibernate/exception/internal/SQLStateConverter$1
+instanceKlass org/hibernate/engine/jdbc/spi/SqlExceptionHelper$1
+instanceKlass org/hibernate/engine/jdbc/spi/SqlExceptionHelper$WarningHandler
