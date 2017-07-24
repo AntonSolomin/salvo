@@ -19,16 +19,25 @@ public class Game {
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
     private Set<GamePlayer> gamePlayers = new HashSet<>();
 
+    @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
+    private Set<Score> score = new HashSet<>();
+
     public Game () {
         gameCreationDate = new Date();
     }
+
     public long getGameId () {
         return this.gameId;
     }
+
     public Date getDate() { return this.gameCreationDate;}
+
     public void addGamePlayer(GamePlayer inputGamePlayer){
         gamePlayers.add(inputGamePlayer);
     }
+
+    public void addScore (Score score){this.score.add(score);}
+
     public Date getGameCreationDate (){
         return gameCreationDate;
     }
@@ -38,6 +47,15 @@ public class Game {
     public void addSeconds (int seconds) {
         this.gameCreationDate = gameCreationDate.from(gameCreationDate.toInstant().plusSeconds(seconds));
     }
+
+    public Set<Score> getScore() {
+        return score;
+    }
+
+    public void setScore(Set<Score> score) {
+        this.score = score;
+    }
+
     public Set<GamePlayer> getGamePlayers() {
         return gamePlayers;
     }

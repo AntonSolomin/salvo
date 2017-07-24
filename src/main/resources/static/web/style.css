@@ -1,15 +1,36 @@
-#yourShipMap td {
+#yourShipsMap td {
 	border: 1px solid black;
 	width: 20px;
 	height: 20px;
 }
 
-#yourShipMap td[data-location="side"] {
+#yourShipsMap td[data-location="side"] {
 	border: none;
 }
 
 #maps{
-	width: 100%;
-	height: auto;
-	border: 1px solid green;
+	display: flex;
+	justify-content: center;
+}
+
+#salvosMap td {
+	border: 1px solid black;
+	width: 20px;
+	height: 20px;
+}
+
+#salvosMap td[data-location="side"] {
+	border: none;
+}
+
+#title {
+	display: flex;
+	justify-content: center;
+
+}
+
+#info {
+	display: flex;
+	justify-content: center;
+	
 }

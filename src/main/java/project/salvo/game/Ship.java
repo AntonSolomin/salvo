@@ -21,14 +21,15 @@ public class Ship {
     @JoinColumn(name = "gamePlayer_id")
     private GamePlayer gamePlayer;
 
+
+
     private ShipClass shipClass;
 
     @ElementCollection
     @Column(name = "locations")
     private List<String> locations = new ArrayList<>();
 
-    public Ship() {
-    }
+    public Ship() {}
 
     public Ship(GamePlayer gamePlayer, List<String> shipLocations, ShipClass boatType) {
         this.gamePlayer = gamePlayer;

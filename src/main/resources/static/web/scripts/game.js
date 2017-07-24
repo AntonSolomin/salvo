@@ -11,27 +11,25 @@ $(function () {
 	}
 });
 
-
 function onDataReady(data) {
-	renderTable();
-	renderShips(data);
+	console.log(data);
+	renderTables();
+	renderShips(data, "#yourShipsMap");
+	renderSalvos(data, "#salvosMap");
+	renderSalvos(data, "#yourShipsMap");
 	renderPlayerInfo(data);
 }
 
-function renderTable() {
-
+function renderTables() {
 	var alphabet = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 	var output = "";
-
 	//top row ABC..
 	output += "<tr>";
 	for (var i = 0; i < alphabet.length && i < 11; i++) {
 		output += "<th>" + alphabet[i] + "</th>";
 	}
 	output += "</tr>";
-
 	var counter1 = 1;
-
 	for (var j = 0; j < 10; ++j) {
 		output += "<tr>" + "<td data-location=side>" + counter1 + "</td>";
 		for (var c = 0; c < alphabet.length && c < 10; c++) {
@@ -40,11 +38,12 @@ function renderTable() {
 		output += "</tr>";
 		counter1++;
 	}
-	$("#yourShipMap").html(output);
+	$("#yourShipsMap").html(output);
+	$("#salvosMap").html(output);
 }
 
-function renderShips(data) {
-	var $map = $(".fields");
+function renderShips(data, tableSelector) {
+	var $map = $(tableSelector).find(".fields");
 	for (var i = 0; i < data.ships.length; ++i) {
 		for (var k = 0; k < data.ships[i].locations.length; ++k) {
 			for (var j = 0; j < $map.length; ++j) {
@@ -58,7 +57,7 @@ function renderShips(data) {
 }
 
 function renderPlayerInfo(data) {
-	console.log(data);
+	
 	var youPlayer = "";
 	var otherPlayer = "";
 	var queryObj = parseQueryObject();
@@ -69,17 +68,64 @@ function renderPlayerInfo(data) {
 			if (data.game_players[i].id == queryObj.gp) {
 				youPlayer += " (You)";
 			}
-		}
-		else {
+		} else {
 			otherPlayer += data.game_players[i].player.email;
 			if (data.game_players[i].id == queryObj.gp) {
 				otherPlayer += " (You) ";
 			}
 		}
 	}
-	
 	$("#gameInfo").html(youPlayer + " <--VS--> " + otherPlayer);
 }
+
+function renderSalvos(data, tableSelector) {
+	var queryObj = parseQueryObject();
+	for (var key in data.salvos) {
+		
+		//my shots on the enemy map
+		if (key == queryObj.gp) {
+			var $myMap = $("#salvosMap").find(".fields");
+			var mySalvos = data.salvos[key];
+			for (var turnKey in mySalvos) {
+				// Arrays with shots
+				var mySalvoTurn = mySalvos[turnKey];
+				for (var i = 0; i < mySalvoTurn.length; ++i) {
+					for (var j = 0; j < $myMap.length; ++j) {
+						var $field = $($myMap[j]); 
+						if (mySalvoTurn[i] == $field.attr("data-location")) {
+							$field.css("background-image", "url('https://image.flaticon.com/icons/png/128/32/32178.png')");
+							$field.css("background-size", "contain");
+						}
+					}
+				}
+			}
+		}
+		
+		//enemy shots on my map
+		if (key != queryObj.gp) {
+			var $enemyMap = $("#yourShipsMap").find(".fields");
+			var enemySalvos = data.salvos[key];
+			for (var enemyTurnKey in enemySalvos) {
+				// Arrays with shots
+				var enemySalvoTurn = enemySalvos[enemyTurnKey];
+				for (var i = 0; i < enemySalvoTurn.length; ++i) {
+					for (var j = 0; j < $enemyMap.length; ++j) {
+						var $enemyField = $($enemyMap[j]); 
+						if (enemySalvoTurn[i] == $enemyField.attr("data-location")) {
+							//$enemyField.css("background-color", "grey");
+							$enemyField.css("background-image", "url('https://image.flaticon.com/icons/png/128/32/32178.png')");
+							$enemyField.css("background-size", "contain");
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
+
 
 function parseQueryObject() {
 	// using substring to get a string from position 1

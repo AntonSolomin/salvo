@@ -22,7 +22,8 @@ public class SalvoApplication {
                                       GameRepository gameRepository,
                                       GamePlayerRepository gamePlayerRepository,
                                       ShipRepository shipRepository,
-                                      SalvoRepository salvoRepository) {
+                                      SalvoRepository salvoRepository,
+                                      ScoreRepository scoreRepository) {
         return (args) -> {
             Player p1 = new Player("Jack", "Bauer", "1@gmail.com");
             Player p2 = new Player("Chloe", "O'Brian", "2@gmail.com");
@@ -69,8 +70,18 @@ public class SalvoApplication {
             Ship s4 = new Ship(gameThreePlayerOne,  new ArrayList<>(Arrays.asList("A1", "A2", "A3")), Ship.ShipClass.SUBMARINE);
             shipRepository.save(s4);
 
-            Salvo newSalvo = new Salvo(gameTwoPlayerOne, new ArrayList<>(Arrays.asList("A1", "A2", "A4")));
+            Salvo newSalvo = new Salvo(gameTwoPlayerOne, new ArrayList<>(Arrays.asList("A1", "A2", "A4")), 4);
             salvoRepository.save(newSalvo);
+
+            Salvo secondSalvo = new Salvo(gameTwoPlayerTwo, new ArrayList<>(Arrays.asList("B1", "B2", "C3")), 8);
+            Salvo thirdSalvo = new Salvo(gameTwoPlayerTwo, new ArrayList<>(Arrays.asList("B8", "B8", "C8")) ,27);
+            salvoRepository.save(secondSalvo);
+            salvoRepository.save(thirdSalvo);
+
+            Score newScore = new Score(mySecondGame, p1, 1);
+            Score newOtherScore = new Score(mySecondGame, p2, 0);
+            scoreRepository.save(newScore);
+            scoreRepository.save(newOtherScore);
         };
     }
 }

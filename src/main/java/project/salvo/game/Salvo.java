@@ -18,17 +18,18 @@ public class Salvo {
     @JoinColumn(name = "gamePlayer_id")
     private GamePlayer gamePlayer;
 
-    private long turnNumber = 1;
+    private int turnNumber;
 
     @ElementCollection
     @Column(name = "shotLocations")
     private List<String> shotLocations = new ArrayList<>();
 
     public Salvo() {}
-    public Salvo(GamePlayer gamePlayer, List<String> shotLocations) {
+    public Salvo(GamePlayer gamePlayer, List<String> shotLocations, int turn) {
         this.gamePlayer = gamePlayer;
         gamePlayer.addSalvo(this);
         this.shotLocations = shotLocations;
+        this.turnNumber = turn;
     }
 
     public GamePlayer getGamePlayer() {
@@ -47,15 +48,11 @@ public class Salvo {
         this.shotLocations = shotLocations;
     }
 
-    public void nextTurn() {
-        this.turnNumber ++;
-    }
-
     public long getTurnNumber() {
         return turnNumber;
     }
 
-    public void setTurnNumber(long turnNumber) {
+    public void setTurnNumber(int turnNumber) {
         this.turnNumber = turnNumber;
     }
 }
