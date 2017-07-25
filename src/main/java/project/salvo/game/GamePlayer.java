@@ -56,6 +56,10 @@ public class GamePlayer {
         this.game = game;
     }
 
+    public Set<Score> getScore () {
+        return player.getScores();
+    }
+
     public Set<Ship> getShips() {
         return ships;
     }

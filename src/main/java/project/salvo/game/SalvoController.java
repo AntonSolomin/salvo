@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -23,7 +21,9 @@ public class SalvoController {
     @Autowired
     private GamePlayerRepository gamePlayerRepository;
     @Autowired
-    private  SalvoRepository salvoRepository;
+    private SalvoRepository salvoRepository;
+    @Autowired
+    private PlayerRepository playerRepository;
 
     @RequestMapping("/games")
     public List<Object> getGames () {
@@ -62,7 +62,6 @@ public class SalvoController {
         toReturn.put("salvos", playerSalvos);
         toReturn.put("game_players", gamePlayers);
         toReturn.put("ships", locations);
-
         return toReturn;
     }
 
@@ -75,8 +74,6 @@ public class SalvoController {
         return dto;
     }
 
-
-
     private Map<String, Object> makeGameDTO(Game game) {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", game.getGameId());
@@ -84,6 +81,7 @@ public class SalvoController {
         List<GamePlayer> gamePlayers = new ArrayList<>(game.getGamePlayers());
         List<Object> gamePlayerDtos = gamePlayers.stream().map(gp -> makeGamePlayerDto(gp)).collect(toList());
         dto.put("gamePlayers", gamePlayerDtos);
+        dto.put("scores", makeScoresDto());
         return dto;
     }
 
@@ -94,6 +92,41 @@ public class SalvoController {
         return gamePlayerDto;
     }
 
+    private  Map<String, Object> makeScoresDto () {
+        Map<String, Object> playerScoresDto = new LinkedHashMap<>();
+        playerRepository.findAll()
+                .stream()
+                .forEach(player -> playerScoresDto.put(player.getUserName(), makeScoreDto(player)));
+        return playerScoresDto;
+    }
+
+    private Map<String, Object> makeScoreDto (Player player) {
+        Map<String, Object> userScoreCount = new HashMap<>();
+        double total = 0;
+        double won = 0;
+        double lost = 0;
+        double tied = 0;
+        Set<Score> playerScoreSet = player.getScores();
+        for (Score ps : playerScoreSet) {
+            if (ps.getPoints() == 1.0) {
+                won++;
+                total += 1;
+            }
+            if (ps.getPoints() == 0.5) {
+                tied++;
+                total += 0.5;
+            }
+            if (ps.getPoints() == 0) {
+                lost++;
+            }
+        }
+        userScoreCount.put("total", total);
+        userScoreCount.put("won", won);
+        userScoreCount.put("lost", lost);
+        userScoreCount.put("tied", tied);
+        return userScoreCount;
+    }
+
     private Map<String, Object> makePlayerDto (Player player) {
         Map<String, Object> playerDto = new LinkedHashMap<>();
         playerDto.put("id", player.getUserId());
@@ -101,7 +134,7 @@ public class SalvoController {
         return playerDto;
     }
 
-    private Map<String,Object> makeShipDto (Ship ship) {
+    private Map<String, Object> makeShipDto (Ship ship) {
         Map<String,Object> shipDto = new LinkedHashMap<>();
         shipDto.put("type", ship.getShipClass());
         shipDto.put("locations", ship.getLocations());

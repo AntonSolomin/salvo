@@ -1,8 +1,6 @@
 package project.salvo.game;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by Anton on 24.07.2017.
@@ -22,12 +20,12 @@ public class Score {
     @JoinColumn(name="player_id")
     private Player player;
 
-    private int score;
+    private double points;
 
     public Score(){}
 
-    public Score(Game game, Player player, int score) {
-        this.score = score;
+    public Score(Game game, Player player, double points) {
+        this.points = points;
         this.game = game;
         this.player = player;
         game.addScore(this);
@@ -60,11 +58,11 @@ public class Score {
         this.scoreId = scoreId;
     }
 
-    public int getScore() {
-        return score;
+    public double getPoints() {
+        return points;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setPoints(double points) {
+        this.points = points;
     }
 }
