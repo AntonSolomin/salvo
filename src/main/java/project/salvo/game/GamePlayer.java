@@ -13,7 +13,7 @@ import java.util.Set;
 public class GamePlayer {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private long GamePlayerId;
+    private long gamePlayerId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
@@ -34,6 +34,7 @@ public class GamePlayer {
     public GamePlayer() {
         gamePlayerCreationDate = new Date();
     }
+
     public GamePlayer(Player inputPlayer, Game inputGame) {
         gamePlayerCreationDate = new Date();
         game = inputGame;
@@ -85,6 +86,6 @@ public class GamePlayer {
 
     public void addSalvo(Salvo newSalvo){locations.add(newSalvo);}
 
-    public long getId () {return this.GamePlayerId;}
+    public long getId () {return this.gamePlayerId;}
 
 }

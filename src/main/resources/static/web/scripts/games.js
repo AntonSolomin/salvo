@@ -1,27 +1,44 @@
 $(function () {
 	$.getJSON("/api/games", onDataReady);
+});
 
-	function onDataReady(serverData) {
-		console.log(serverData);
+function onDataReady(data) {
+	renderGames(data);
+	renderLeaderboard(data);
+}
+
+function renderGames(data) {
+	console.log(data);
 		var output = "";
-		for (var i = 0; i < serverData.length; i++) {
-			var myDate = new Date(serverData[i].date);
+		for (var i = 0; i < data.games.length; i++) {
+			var myDate = new Date(data.games[i].date);
 			output += "<li>";
-			output += "Game id: " + serverData[i].id + ". Creation date: " + myDate;
-			for (var j = 0; j < serverData[i].gamePlayers.length; ++j) {
-				output += "<br/>" +  " User email: " + serverData[i].gamePlayers[j].player.email + ". ";
-				output += " User ID: " + serverData[i].gamePlayers[j].player.id + ". ";
+			output += "Game id: " + data.games[i].id + ". Creation date: " + myDate;
+			for (var j = 0; j < data.games[i].gamePlayers.length; ++j) {
+				output += "<br/>" +  " User email: " + data.games[i].gamePlayers[j].player.email + ". ";
+				output += " User ID: " + data.games[i].gamePlayers[j].player.id + ". ";
 			}
 			output += "</li>";
 		}
 		$("#output").html(output);
+}
+
+function renderLeaderboard(data) {
+	var arrTh = ["Name", "Total", "Won", "Lost", "Tied"];
+	var output = "";
+	output += "<tr>";
+	for (var i = 0; i<arrTh.length; ++i) {
+		output += "<th>" + arrTh[i] + "</th>";
 	}
-
-	function msToTime(s) {
-		// Pad to 2 or 3 digits, default is 2
-		var pad = (n, z = 2) => ('00' + n).slice(-z);
-		return pad(s / 3.6e6 | 0) + ':' + pad((s % 3.6e6) / 6e4 | 0) + ':' + pad((s % 6e4) / 1000 | 0) + '.' + pad(s % 1000, 3);
+	output += "</tr>";
+	for (var key in data.leaderboard) {
+		output += "<tr>";
+		output += "<td>" + key + "</td>";
+		output += "<td>" + data.leaderboard[key].total + "</td>";
+		output += "<td>" + data.leaderboard[key].won + "</td>";
+		output += "<td>" + data.leaderboard[key].lost + "</td>";
+		output += "<td>" + data.leaderboard[key].tied + "</td>";
+		output += "</tr>";
 	}
-
-
-});
+	$("#leaderBoard").html(output);
+}

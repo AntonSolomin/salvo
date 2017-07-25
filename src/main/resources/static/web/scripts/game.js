@@ -1,12 +1,9 @@
 $(function () {
 	//getting correct link
 	var queryObj = parseQueryObject();
-
 	if (queryObj.hasOwnProperty("gp")) {
 		var id = queryObj.gp;
 		var link = "/api/game_view/" + id;
-		//
-
 		$.getJSON(link, onDataReady);
 	}
 });
@@ -18,6 +15,7 @@ function onDataReady(data) {
 	renderSalvos(data, "#salvosMap");
 	renderSalvos(data, "#yourShipsMap");
 	renderPlayerInfo(data);
+	renderLeaderboard(data);
 }
 
 function renderTables() {
@@ -123,9 +121,9 @@ function renderSalvos(data, tableSelector) {
 	}
 }
 
-
-
-
+function renderLeaderboard (data) {
+	
+}
 
 function parseQueryObject() {
 	// using substring to get a string from position 1

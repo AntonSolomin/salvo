@@ -50,7 +50,6 @@ public class Score {
     }
 
     public long getScoreId() {
-
         return scoreId;
     }
 
