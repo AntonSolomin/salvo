@@ -1,6 +1,7 @@
 package project.salvo.game;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,15 +27,21 @@ public class SalvoController {
     private PlayerRepository playerRepository;
 
     @RequestMapping("/games")
-    public Map<String,Object> getGames () {
+    public Map<String,Object> getGames (Authentication authentication) {
         List<Object> gamesDto = gameRepository
                 .findAll()
                 .stream()
                 .map(g -> makeGameDTO(g))
                 .collect(toList());
         Map<String,Object> finalDto = new LinkedHashMap<>();
+
+        Player user = currentAuthedUser(authentication);
+        if (user != null) {
+            finalDto.put("user", makePlayerDto(user));
+        }
         finalDto.put("games", gamesDto);
         finalDto.put("leaderboard", makeScoresDto());
+
         return  finalDto;
     }
 
@@ -140,5 +147,9 @@ public class SalvoController {
         shipDto.put("type", ship.getShipClass());
         shipDto.put("locations", ship.getLocations());
         return shipDto;
+    }
+
+    private Player currentAuthedUser (Authentication auth) {
+         return playerRepository.findByUserName(auth.getName());
     }
 }

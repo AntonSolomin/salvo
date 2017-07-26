@@ -15,7 +15,6 @@ function onDataReady(data) {
 	renderSalvos(data, "#salvosMap");
 	renderSalvos(data, "#yourShipsMap");
 	renderPlayerInfo(data);
-	renderLeaderboard(data);
 }
 
 function renderTables() {
@@ -79,7 +78,6 @@ function renderPlayerInfo(data) {
 function renderSalvos(data, tableSelector) {
 	var queryObj = parseQueryObject();
 	for (var key in data.salvos) {
-		
 		//my shots on the enemy map
 		if (key == queryObj.gp) {
 			var $myMap = $("#salvosMap").find(".fields");
@@ -91,14 +89,12 @@ function renderSalvos(data, tableSelector) {
 					for (var j = 0; j < $myMap.length; ++j) {
 						var $field = $($myMap[j]); 
 						if (mySalvoTurn[i] == $field.attr("data-location")) {
-							$field.css("background-image", "url('https://image.flaticon.com/icons/png/128/32/32178.png')");
-							$field.css("background-size", "contain");
+							$field.html("<p class='hit'>" + turnKey + "</p>");
 						}
 					}
 				}
 			}
 		}
-		
 		//enemy shots on my map
 		if (key != queryObj.gp) {
 			var $enemyMap = $("#yourShipsMap").find(".fields");
@@ -110,19 +106,13 @@ function renderSalvos(data, tableSelector) {
 					for (var j = 0; j < $enemyMap.length; ++j) {
 						var $enemyField = $($enemyMap[j]); 
 						if (enemySalvoTurn[i] == $enemyField.attr("data-location")) {
-							//$enemyField.css("background-color", "grey");
-							$enemyField.css("background-image", "url('https://image.flaticon.com/icons/png/128/32/32178.png')");
-							$enemyField.css("background-size", "contain");
+							$enemyField.html("<p class='hit'>" + enemyTurnKey + "</p>");
 						}
 					}
 				}
 			}
 		}
 	}
-}
-
-function renderLeaderboard (data) {
-	
 }
 
 function parseQueryObject() {
