@@ -1,4 +1,5 @@
 $(function () {
+	$("#submitlogout").click(logOutRedirect);
 	//getting correct link
 	var queryObj = parseQueryObject();
 	if (queryObj.hasOwnProperty("gp")) {
@@ -15,6 +16,52 @@ function onDataReady(data) {
 	renderSalvos(data, "#salvosMap");
 	renderSalvos(data, "#yourShipsMap");
 	renderPlayerInfo(data);
+
+	$("#BATTLESHIP").click(selectNextTds);
+	$("#CARRIER").click();
+	$("#SUBMARINE").click();
+}
+
+
+function selectNextTds () {
+	for (var i = 0; i<6; ++i) {
+		
+	}
+}
+
+
+
+function placeBattleship() {
+	console.log("Place Battleship");
+	$("td").click(
+		function () {
+			$(this).closest('td').next().css("background-color", "black");
+			console.log("Next");
+		}
+	)
+}
+
+
+function sendShips(dataObj) {
+	var queryObj = parseQueryObject();
+	console.log("api/games/players/" + queryObj.gp + "/ships");
+	$.post({
+		url: "/api/games/players/" + queryObj.gp + "/ships",
+		data: JSON.stringify(dataObj),
+		dataType: "json",
+		contentType: "application/json"
+	}).done(function () {
+		console.log("Success!");
+	}).fail(function () {
+		console.log("Fail!");
+	});
+}
+
+function getGamePlayerId() {
+	var queryObj = parseQueryObject();
+	if (queryObj.hasOwnProperty("gp")) {
+		return queryObj.gp;
+	}
 }
 
 function renderTables() {
@@ -54,7 +101,7 @@ function renderShips(data, tableSelector) {
 }
 
 function renderPlayerInfo(data) {
-	
+
 	var youPlayer = "";
 	var otherPlayer = "";
 	var queryObj = parseQueryObject();
@@ -87,7 +134,7 @@ function renderSalvos(data, tableSelector) {
 				var mySalvoTurn = mySalvos[turnKey];
 				for (var i = 0; i < mySalvoTurn.length; ++i) {
 					for (var j = 0; j < $myMap.length; ++j) {
-						var $field = $($myMap[j]); 
+						var $field = $($myMap[j]);
 						if (mySalvoTurn[i] == $field.attr("data-location")) {
 							$field.html("<p class='hit'>" + turnKey + "</p>");
 						}
@@ -104,7 +151,7 @@ function renderSalvos(data, tableSelector) {
 				var enemySalvoTurn = enemySalvos[enemyTurnKey];
 				for (var i = 0; i < enemySalvoTurn.length; ++i) {
 					for (var j = 0; j < $enemyMap.length; ++j) {
-						var $enemyField = $($enemyMap[j]); 
+						var $enemyField = $($enemyMap[j]);
 						if (enemySalvoTurn[i] == $enemyField.attr("data-location")) {
 							$enemyField.html("<p class='hit'>" + enemyTurnKey + "</p>");
 						}
@@ -129,4 +176,10 @@ function parseQueryObject() {
 		});
 	}
 	return obj;
+}
+
+function logOutRedirect() {
+	$.post("/api/logout").done(function () {
+		location.replace("/web/games.html");
+	});
 }

@@ -140,7 +140,8 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
-                .antMatchers("/api/games").hasAuthority("USER")
+                .antMatchers("/api/game_view/**").hasAuthority("USER")
+                .antMatchers("/api/games").permitAll()
                 .and()
                 .formLogin();
 

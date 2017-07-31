@@ -9,12 +9,43 @@
 </head>
 
 <body>
+	<form id="logout">
+		<button id="submitlogout" type="button" class="btn btn-default">log out</button>
+	</form>
 	<p id="title">Ship Locations</p>
-	<div id="info"><p id="gameInfo"></p></div>
+	<div id="info">
+		<p id="gameInfo"></p>
+	</div>
 	<div id="maps">
 		<table id="yourShipsMap"></table>
 		<table id="salvosMap"></table>
 	</div>
+
+	<div>
+		<p>Click on a ship to place it on the map</p>
+		<table id="choice">
+			<tr id="BATTLESHIP">
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr id="CARRIER">
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr id="SUBMARINE">
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</table>
+	</div>
+
 	<script src="scripts/game.js" type="text/javascript"></script>
 </body>
 
