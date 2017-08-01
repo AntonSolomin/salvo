@@ -22,26 +22,39 @@
 	</div>
 
 	<div>
-		<p>Click on a ship to place it on the map</p>
+	<form>
+		<button id="submitShips" type="button" class="btn btn-default">Ships Ready!</button>
+	</form>
+	<form>
+		<button id="boardClear" type="button" class="btn btn-default">Clear the board.</button>
+	</form>
+		<p id="message">Click on a ship to place it on the map</p>
 		<table id="choice">
-			<tr id="BATTLESHIP">
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
+			<tr id="CARRIER" class="carrier ship">
+				<td data-length="5"></td>
+				<td data-length="5"></td>
+				<td data-length="5"></td>
+				<td data-length="5"></td>
+				<td data-length="5"></td>
 			</tr>
-			<tr id="CARRIER">
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
+			<tr id="BATTLESHIP" class="battleship ship">
+				<td data-length="4"></td>
+				<td data-length="4"></td>
+				<td data-length="4"></td>
+				<td data-length="4"></td>
 			</tr>
-			<tr id="SUBMARINE">
-				<td></td>
-				<td></td>
-				<td></td>
+			<tr id="SUBMARINE" class="submarine ship">
+				<td data-length="3"></td>
+				<td data-length="3"></td>
+				<td data-length="3"></td>
+			</tr>
+			<tr id="DESTROYER" class="destroyer ship">
+				<td data-length="2"></td>
+				<td data-length="2"></td>
+			</tr>
+			<tr id="PATROL_BOAT" class="boat ship">
+				<td data-length="1"></td>
+
 			</tr>
 		</table>
 	</div>

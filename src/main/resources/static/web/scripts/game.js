@@ -11,46 +11,135 @@ $(function () {
 
 function onDataReady(data) {
 	console.log(data);
-	renderTables();
+	renderTables(1);
+	renderTables(2);
 	renderShips(data, "#yourShipsMap");
 	renderSalvos(data, "#salvosMap");
 	renderSalvos(data, "#yourShipsMap");
 	renderPlayerInfo(data);
+	$("#salvosMap").hide();
+	$("td[data-length]").click(choseShip);
 
-	$("#BATTLESHIP").click(selectNextTds);
-	$("#CARRIER").click();
-	$("#SUBMARINE").click();
+	$("td[data-location1]").click(placeShipsOnTheMap);
+	$("td[data-location1]").mouseover(hoverHighlight);
+	$("#submitShips").click(sendShips);
+	//$("#boardClear").click(clearTheBoard);
 }
 
+var shipLength = 0;
+var shipClass = "";
+var locationsArr = [];
+var shipsArr = [];
 
-function selectNextTds () {
-	for (var i = 0; i<6; ++i) {
-		
+var arr = [];
+
+function clearTheBoard() {
+	shipLength = 0;
+	shipClass = "";
+	locationsArr = [];
+	shipsArr = [];
+	arr = [];
+	$("td[data-location1]").removeClass("placed");
+	$(".ship").removeClass("hide");
+}
+
+function hoverHighlight() {
+	for (var i = 0; i < arr.length; i++) {
+		arr[i].removeClass("highlight");
+	}
+	arr = [];
+	//$(this).css("background-color", "black");
+	var alphabet = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+	var current = $(this).attr("data-location1");
+
+	var currentLetter = current.split("");
+	var currentNumber = current.slice(1);
+
+	for (var i = 0; i < alphabet.length; ++i) {
+		if (alphabet[i] == currentLetter[0]) {
+			var nextLetter = alphabet.slice(i);
+			for (var j = 0; j < shipLength; ++j) {
+				var letter = nextLetter[j].slice(0, 1);
+				$("td[data-location1='" + letter + currentNumber + "']").addClass("highlight");
+				arr.push($("td[data-location1='" + letter + currentNumber + "']"));
+			}
+		}
 	}
 }
 
-
-
-function placeBattleship() {
-	console.log("Place Battleship");
-	$("td").click(
-		function () {
-			$(this).closest('td').next().css("background-color", "black");
-			console.log("Next");
-		}
-	)
+function choseShip() {
+	shipLength = $(this).attr("data-length");
+	shipClass = $(this).parent().attr("id");
+	shipClassElement = $(this).parent();
+	console.log("Ship length is: " + shipLength);
+	console.log(shipClassElement);
 }
 
+function placeShipsOnTheMap() {
 
-function sendShips(dataObj) {
+	var alphabet = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+	//getting the start location
+	var start = $(this).attr("data-location1");
+	console.log();
+
+	// getting the number and the letter of the selected start location
+	var startLetter = start.split("");
+	var startNumber = start.slice(1);
+
+	// horisontal placement logic
+	for (var i = 0; i < alphabet.length; ++i) {
+		if (alphabet[i] == startLetter[0]) {
+			var nextLetter = alphabet.slice(i);
+			locationsArr = [];
+			addtoShipsObj();
+			shipClassElement.addClass("hide");
+			for (var j = 0; j < shipLength; ++j) {
+				var letter = nextLetter[j].slice(0, 1);
+				var location = (letter + startNumber);
+				paintShipOnTheMap(location);
+				locationsArr.push(location);
+			}
+		}
+	}
+}
+
+function paintShipOnTheMap(location) {
+	$("td[data-location1='" + location + "']").addClass("placed");
+}
+
+function addtoShipsObj() {
+	var ship = {};
+	ship.locations = locationsArr;
+	ship.shipClass = shipClass;
+	shipsArr.push({
+		"locations": ship.locations,
+		"shipClass": ship.shipClass
+	});
+	console.log(shipsArr);
+}
+
+function test() {
+	console.log("Test");
+	console.log(shipsArr);
+}
+
+function sendShips() {
 	var queryObj = parseQueryObject();
 	console.log("api/games/players/" + queryObj.gp + "/ships");
+	console.log(shipsArr);
+
 	$.post({
 		url: "/api/games/players/" + queryObj.gp + "/ships",
-		data: JSON.stringify(dataObj),
+		data: JSON.stringify(shipsArr),
 		dataType: "json",
 		contentType: "application/json"
 	}).done(function () {
+		$("#salvosMap").show();
+		$("#submitShips").hide();
+		$("#boardClear").hide();
+		$("#message").html("Prepare for battle");
+		
 		console.log("Success!");
 	}).fail(function () {
 		console.log("Fail!");
@@ -64,7 +153,7 @@ function getGamePlayerId() {
 	}
 }
 
-function renderTables() {
+function renderTables(str) {
 	var alphabet = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 	var output = "";
 	//top row ABC..
@@ -75,15 +164,18 @@ function renderTables() {
 	output += "</tr>";
 	var counter1 = 1;
 	for (var j = 0; j < 10; ++j) {
-		output += "<tr>" + "<td data-location=side>" + counter1 + "</td>";
+		output += "<tr>" + "<td data-location" + str + "=side>" + counter1 + "</td>";
 		for (var c = 0; c < alphabet.length && c < 10; c++) {
-			output += '<td class="fields" data-location="' + alphabet[c + 1] + counter1 + '">' + " " + "</td>";
+			output += '<td class="fields" data-location' + str + '="' + alphabet[c + 1] + counter1 + '">' + " " + "</td>";
 		}
 		output += "</tr>";
 		counter1++;
 	}
-	$("#yourShipsMap").html(output);
-	$("#salvosMap").html(output);
+	if (str == 1) {
+		$("#yourShipsMap").html(output);
+	} else {
+		$("#salvosMap").html(output);
+	}
 }
 
 function renderShips(data, tableSelector) {

@@ -22,9 +22,7 @@ function onDataReady(data) {
 
 }
 
-function sendShips() {
-	$.post("/games/players/" + getGamePlayerId() + "/ships").done().fail();
-}
+
 
 function newGame() {
 	$.post("/api/games").done(function (data) {
@@ -32,12 +30,6 @@ function newGame() {
 	});
 }
 
-function getGamePlayerId() {
-	if (queryObj.hasOwnProperty("gp")) {
-		var id = queryObj.gp;
-		return id;
-	}
-}
 
 function joinGame() {
 	$.post("/api/games/" + $(this).attr("data-game-id") + "/players").done(function (data) {

@@ -45,13 +45,22 @@
 	float: right;
 }
 
-td:hover { 
-    background-color: yellow;
-}
 
 #choice td {
 	border: 1px solid black;
 	background-color: red;
 	width: 20px;
 	height: 20px;
+}
+
+.highlight {
+	background-color: gray;
+}
+
+.placed {
+	background-color: green;
+}
+
+.hide{
+	visibility: hidden;
 }
