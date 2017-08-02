@@ -36,7 +36,7 @@
 .hit {
 	margin: 0;
 	border: 1px solid black;
-	border-radius: 10px;
+	border-radius: 20px;
 	background-color: red;
 	text-align: center;
 }
@@ -48,7 +48,7 @@
 
 #choice td {
 	border: 1px solid black;
-	background-color: red;
+	background-color: black;
 	width: 20px;
 	height: 20px;
 }
@@ -63,4 +63,8 @@
 
 .hide{
 	visibility: hidden;
+}
+
+.overlap {
+	background-color: red;
 }
