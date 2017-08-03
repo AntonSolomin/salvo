@@ -18,7 +18,7 @@ public class Salvo {
     @JoinColumn(name = "gamePlayer_id")
     private GamePlayer gamePlayer;
 
-    private int turnNumber;
+    private int turnNumber = 1;
 
     @ElementCollection
     @Column(name = "shotLocations")
@@ -48,7 +48,7 @@ public class Salvo {
         this.shotLocations = shotLocations;
     }
 
-    public long getTurnNumber() {
+    public int getTurnNumber() {
         return turnNumber;
     }
 

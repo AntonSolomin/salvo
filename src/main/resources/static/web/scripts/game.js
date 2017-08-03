@@ -312,7 +312,6 @@ function sendShips() {
 	} else {
 		alert("You must place all the ships on the board");
 	}
-
 }
 
 function renderTables(str) {

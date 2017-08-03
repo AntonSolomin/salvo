@@ -214,12 +214,62 @@ public class SalvoController {
             s.setGamePlayer(gamePlayer);
             shipRepository.save(s);
         }
-        response.put("succeess", "the ships have been successfuly placed");
+        response.put("success", "the ships have been successfuly placed");
         return new ResponseEntity<Object>(response, HttpStatus.CREATED);
     }
 
-    private Map<Long, Object> makeSalvoDto(GamePlayer gamePlayer) {
-        Map<Long, Object> dto = new HashMap<>();
+    @RequestMapping(path = "/games/players/{gamePlayerId}/salvos", method = RequestMethod.POST)
+    public ResponseEntity<Object> postSalvos (@PathVariable long gamePlayerId,
+                                              Authentication authentication,
+                                              @RequestBody List<String> salvo) {
+        // getting the current player
+        Player user = currentAuthedUser(authentication);
+        // response to be returned
+        Map<String, Object> response = new HashMap<>();
+
+        // checking if there is a user logged in if not return Unauthorized
+        if (isGuest(authentication)) {
+            response.put("error", "please log in");
+            return new ResponseEntity<Object>(response, HttpStatus.UNAUTHORIZED);
+        }
+
+        // getting the game player with the necessary ID. if there isn't return Unauthorized
+        GamePlayer gamePlayer = gamePlayerRepository.findOne(gamePlayerId);
+        if (gamePlayer == null) {
+            response.put("error", "No such game player");
+            return new ResponseEntity<Object>(response, HttpStatus.UNAUTHORIZED);
+        }
+
+        //if the user owns a game player to which he is trying to add salvos. if yes return Unauthorized
+        if (gamePlayer.getPlayer() != user) {
+            response.put("error", "the user is attempting to add salvos for other players");
+            return new ResponseEntity<Object>(response, HttpStatus.UNAUTHORIZED);
+        }
+
+        // checking if the user has already added salvos
+        if (gamePlayer.getSalvo().size() != 0) {
+            response.put("error", "the user has already submitted salvos");
+            return new ResponseEntity<Object>(response, HttpStatus.FORBIDDEN);
+        }
+
+        // otherwise add and save salvos in the ship repository increase turn number and send CREATED response
+        //turn a long into an int
+
+        Salvo mySalvo = new Salvo(gamePlayer, salvo, 1);
+        /*//increase turn number
+        salvo.setTurnNumber(salvo.getTurnNumber() + 1);
+        // set game player
+        salvo.setGamePlayer(gamePlayer);*/
+        salvoRepository.save(mySalvo);
+
+        response.put("success", "the salvos have been successfuly placed");
+        return new ResponseEntity<Object>(response, HttpStatus.CREATED);
+    }
+
+
+
+    private Map<Integer, Object> makeSalvoDto(GamePlayer gamePlayer) {
+        Map<Integer, Object> dto = new HashMap<>();
         Set<Salvo> mySet = gamePlayer.getSalvo();
         for (Salvo sv : mySet) {
             dto.put(sv.getTurnNumber(), sv.getShotLocations());
@@ -299,7 +349,6 @@ public class SalvoController {
     private boolean isGuest(Authentication authentication) {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
-
     // given a player and pg id we look for the gp ids in the player if found one return true
     private boolean checkPlayerHasGamePlayerWithId(Player player, long gamePlayerId) {
 
@@ -315,5 +364,12 @@ public class SalvoController {
             }
         }
         return false;*/
+    }
+
+    public static Long convertToLong(Object o){
+        String stringToConvert = String.valueOf(o);
+        Long convertedLong = Long.parseLong(stringToConvert);
+        return convertedLong;
+
     }
 }
