@@ -60,11 +60,17 @@ function clearTheBoard() {
 }
 
 function hoverHighlight() {
+	// this is so that it isnt possible to highlight the numbers on the left 
+	if (!$(this).hasClass("fields")) {
+		return false;
+	}
+
 	// remove coloring classes and clear arr on a new hover
 	for (var i = 0; i < arr.length; i++) {
 		arr[i].removeClass("highlight");
 		arr[i].removeClass("overlap");
 	}
+	//clearing the arr
 	arr = [];
 
 	var alphabet = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -73,33 +79,71 @@ function hoverHighlight() {
 	var currentLetter = current.split("");
 	var currentNumber = current.slice(1);
 
-	for (var i = 0; i < alphabet.length; ++i) {
-		if (alphabet[i] == currentLetter[0]) {
-			var nextLetter = alphabet.slice(i);
-			var test = [];
-			for (var j = 0; j < shipLength; ++j) {
-				var letter = nextLetter[j].slice(0, 1);
-				var location = letter + currentNumber;
-				$("td[data-location1='" + location + "']").addClass("highlight");
-				// add to an arr to remember what to clear
-				arr.push($("td[data-location1='" + location + "']"));
-				// adding locations to test arr so we can paind whole ships red later if they go overedge
-				test.push(location);
-				if (isOverlap(location)) {
+
+	if (!$("#vertical").is(":checked")) {
+		//here goes the horizontal logic
+		for (var i = 0; i < alphabet.length; ++i) {
+			if (alphabet[i] == currentLetter[0]) {
+				var nextLetter = alphabet.slice(i);
+				var test = [];
+				for (var j = 0; j < shipLength; ++j) {
+					var letter = nextLetter[j].slice(0, 1);
+					var location = letter + currentNumber;
+					console.log(location);
+					$("td[data-location1='" + location + "']").addClass("highlight");
 					// add to an arr to remember what to clear
-					arr.push($("td[data-location1='" + location + "']").addClass("overlap"));
+					arr.push($("td[data-location1='" + location + "']"));
+					// adding locations to test arr so we can paind whole ships red later if they go overedge
+					test.push(location);
+					if (isOverlap(location)) {
+						// add to an arr to remember what to clear
+						arr.push($("td[data-location1='" + location + "']").addClass("overlap"));
+					}
+
 				}
-				
-			}
-			// printing whole ships red if they go overedge
-			for (var u = 0;u< test.length; u++) {
-				if (isOverEdge(test[u])) {
-					for (var l = 0;l< test.length; l++) {
-						$("td[data-location1='" + test[l] + "']").addClass("overlap");
+				// printing whole ships red if they go over the edge
+				for (var u = 0; u < test.length; u++) {
+					if (isOverEdge(test[u])) {
+						for (var l = 0; l < test.length; l++) {
+							$("td[data-location1='" + test[l] + "']").addClass("overlap");
+						}
 					}
 				}
 			}
 		}
+	} else if ($("#vertical").is(":checked")) {
+		// here goes vertical logic
+		var currentN = currentNumber;
+		var test2 = [];
+		var overedgearr = [];
+		for (var m = 0; m < shipLength; m++) {
+			// loc is the locations of the ship
+			var loc = currentLetter[0] + currentN;
+
+			// highlighting locations
+			$("td[data-location1='" + loc + "']").addClass("highlight");
+			// saving location to clear after
+			arr.push($("td[data-location1='" + loc + "']"));
+			// adding locations to test arr so we can paind whole ships red later if they go overedge
+			test2.push(loc);
+			//incrementing to get the next location for the whole length of the ship
+			currentN++
+			if (isOverlap(loc)) {
+				// add to an arr to remember what to clear
+				arr.push($("td[data-location1='" + loc + "']").addClass("overlap"));
+			}
+		}
+		// printing whole ships red if they go over the edge
+		for (var v = 0; v < test2.length; v++) {
+			if (isOverEdgeVertical(test2[v])) {
+				console.log("Paint!");
+				for (var g = 0; g < test2.length; g++) {
+
+					$("td[data-location1='" + test2[g] + "']").addClass("overlap");
+				}
+			}
+		}
+		console.log(test2);
 	}
 }
 
@@ -125,6 +169,18 @@ function isOverEdge(toCheck) {
 	return false;
 }
 
+function isOverEdgeVertical(toCheck) {
+	var numbers = ["11", "12", "13", "14", "15", "16"];
+	console.log(toCheck);
+	var num = toCheck.slice(1);
+	for (var i = 0; i < numbers.length; ++i) {
+		if (numbers[i] == num) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function choseShip() {
 	shipLength = $(this).attr("data-length");
 	shipClass = $(this).parent().attr("id");
@@ -132,50 +188,89 @@ function choseShip() {
 }
 
 function placeShipsOnTheMap() {
-	console.log(locationsArr);
+
 	var alphabet = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 	//getting the start location
 	var start = $(this).attr("data-location1");
 	// getting the number and the letter of the selected start location
 	var startLetter = start.split("");
 	var startNumber = start.slice(1);
-	// horisontal placement logic
-	for (var i = 0; i < alphabet.length; ++i) {
-		if (alphabet[i] == startLetter[0]) {
-			var nextLetter = alphabet.slice(i);
-			//clearing locations arr
-			locationsArr = [];
-			var cellsToBeColored = [];
-			for (var j = 0; j < shipLength; ++j) {
-				var letter = nextLetter[j].slice(0, 1);
-				var location = (letter + startNumber);
-				//if there's an overlap return false
-				if (isOverlap(location)) {
-					console.log("You may not place ships on top of one another");
-					return false;
-				} else if (isOverEdge(location)) {
-					console.log("You may not place ships over the edge of the map");
-					return false;
-				} else {
-					cellsToBeColored.push(location);
-					//adding to locations arr(for ships obj)
-					locationsArr.push(location);
+
+	if (!$("#vertical").is(":checked")) {
+		// horisontal placement logic
+		for (var i = 0; i < alphabet.length; ++i) {
+			if (alphabet[i] == startLetter[0]) {
+				var nextLetter = alphabet.slice(i);
+				//clearing locations arr
+				locationsArr = [];
+				var cellsToBeColored = [];
+				for (var j = 0; j < shipLength; ++j) {
+					var letter = nextLetter[j].slice(0, 1);
+					var location = (letter + startNumber);
+					//if there's an overlap return false
+					if (isOverlap(location)) {
+						console.log("You may not place ships on top of one another");
+						return false;
+					} else if (isOverEdge(location)) {
+						console.log("You may not place ships over the edge of the map");
+						return false;
+					} else {
+						cellsToBeColored.push(location);
+						//adding to locations arr(for ships obj)
+						locationsArr.push(location);
+					}
 				}
+				//painting ship locations
+				for (var p = 0; p < cellsToBeColored.length; p++) {
+					paintShipOnTheMap(cellsToBeColored[p]);
+				}
+				//hiding from selection
+				shipClassElement.addClass("hide");
+				// adding to ships obj
+				addtoShipsObj();
+				//clearing the highlight after a ship's been placed
+				shipLength = 0;
+				shipClass = "";
 			}
-			//painting ship locations
-			for (var p = 0; p<cellsToBeColored.length ; p++) {
-				paintShipOnTheMap(cellsToBeColored[p]);
-			}
-			//hiding from selection
-			shipClassElement.addClass("hide");
-			// adding to ships obj
-			addtoShipsObj();
-			//clearing the highlight after a ship's been placed
-			shipLength = 0;
-			shipClass = "";
 		}
+	} else if ($("#vertical").is(":checked")) {
+		// vertical placement logic
+		var currentN = startNumber;
+		//clearing locations arr
+		locationsArr = [];
+		var toColor = [];
+		for (var t = 0; t < shipLength; ++t) {
+			var loc = startLetter[0] + currentN;
+			if (isOverlap(loc)) {
+				console.log("You may not place ships on top of one another");
+				return false;
+			} else if (isOverEdgeVertical(loc)) {
+				console.log("You may not place ships over the edge of the map");
+				return false;
+			} else {
+				toColor.push(loc);
+				//adding to locations arr(for ships obj)
+				locationsArr.push(loc);
+			}
+			currentN++;
+		}
+		//painting ship locations
+		for (var n = 0; n < toColor.length; n++) {
+			paintShipOnTheMap(toColor[n]);
+		}
+		//hiding from selection
+		shipClassElement.addClass("hide");
+		// adding to ships obj
+		addtoShipsObj();
+		//clearing the highlight after a ship's been placed
+		shipLength = 0;
+		shipClass = "";
+		
 	}
 }
+
+
+
 
 function addtoShipsObj() {
 	//creating a ships obj and adding it to ships arr(that will be sent to back)
@@ -186,11 +281,14 @@ function addtoShipsObj() {
 		"locations": ship.locations,
 		"shipClass": ship.shipClass
 	});
-	console.log(shipsArr);
+	console.log("You have " + shipsArr.length + " ships at this moment.");
 }
 
 function paintShipOnTheMap(location) {
 	if (!isOverlap(location)) {
+		$("td[data-location1='" + location + "']").addClass("placed");
+	}
+	if (!isOverEdgeVertical(location)) {
 		$("td[data-location1='" + location + "']").addClass("placed");
 	}
 }
@@ -198,22 +296,23 @@ function paintShipOnTheMap(location) {
 function sendShips() {
 	console.log("What you send is : " + shipsArr);
 	var queryObj = parseQueryObject();
-	if(shipsArr.length === 5) {
+	console.log("You are sending this number of ships: " + shipsArr.length);
+	if (shipsArr.length == 5) {
 		$.post({
-		url: "/api/games/players/" + queryObj.gp + "/ships",
-		data: JSON.stringify(shipsArr),
-		dataType: "json",
-		contentType: "application/json"
-	}).done(function () {
-		location.reload();
-		console.log("Success!");
-	}).fail(function () {
-		console.log("Fail!");
-	});
+			url: "/api/games/players/" + queryObj.gp + "/ships",
+			data: JSON.stringify(shipsArr),
+			dataType: "json",
+			contentType: "application/json"
+		}).done(function () {
+			location.reload();
+			console.log("Success!");
+		}).fail(function () {
+			console.log("Fail!");
+		});
 	} else {
 		alert("You must place all the ships on the board");
 	}
-	
+
 }
 
 function renderTables(str) {
