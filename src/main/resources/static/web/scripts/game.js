@@ -1,8 +1,21 @@
+//to be sent to the back end
+var queryObj;
+var myData;
+var shipLength = 0;
+var shipClass = "";
+var shipClassElement;
+var locationsArr = [];
+var shipsArr = [];
+var arr = [];
+var salvo = [];
+var salvoLongTimeStorage = [];
+
+
 $(function () {
 	$("#submitlogout").click(logOutRedirect);
 	$("#redirectToGames").click(toGames);
 	//getting correct link
-	var queryObj = parseQueryObject();
+	queryObj = parseQueryObject();
 	if (queryObj.hasOwnProperty("gp")) {
 		var id = queryObj.gp;
 		var link = "/api/game_view/" + id;
@@ -10,17 +23,51 @@ $(function () {
 	}
 });
 
+
+var test = {
+	"history": [
+		{
+			"gpid": 5,
+			"action": [
+				{
+					"turn": 1,
+					"sunk": ["BATTLESHIP", "ELSE"],
+					"hit": ["A2", "A3", "A4"],
+					"left": 3
+			},
+				{
+					"turn": 2,
+					"sunk": ["GKOGE", "GENOGE"],
+					"hit": ["C2", "C3", "C4"],
+					"left": 4
+			}
+			],
+		},
+		{
+			"gpid": 99,
+			"action": [
+				{
+					"turn": 1,
+					"sunk": ["FIRST", "GEGE"],
+					"hit": ["N2", "N3", "N4"],
+					"left": 5
+			},
+				{
+					"turn": 2,
+					"sunk": ["KKKKKK", "LLLLLLL"],
+					"hit": ["F2", "F3", "F4"],
+					"left": 4
+			}
+			]
+
+		}
+	]
+};
+
 function onDataReady(data) {
 	//hiding the enemy map until we submit the ships 
 	$("#salvosMap").hide();
-	//after reload if ships have been placed we enter here
-	if (data.ships.length !== 0) {
-		$("#salvosMap").show();
-		$("#submitShips").hide();
-		$("#boardClear").hide();
-		$(".ship").hide();
-		$("#message").html("Prepare for battle");
-	}
+	myData = data;
 
 	console.log(data);
 	renderTables(1);
@@ -29,6 +76,20 @@ function onDataReady(data) {
 	renderSalvos(data, "#salvosMap");
 	renderSalvos(data, "#yourShipsMap");
 	renderPlayerInfo(data);
+	printHistoryTable(data);
+
+	//after reload if ships have been placed we enter here
+	if (data.ships.length !== 0) {
+		$("#salvosMap").show();
+		$("#submitShips").hide();
+		$("#boardClear").hide();
+		$(".ship").hide();
+		$("#message").html("Prepare for battle");
+		$("#shooting").show();
+		$("td[data-location2]").mouseover(shootHighlight);
+		$("td[data-location2]").click(shootAdd);
+		$("#submitShots").click(sendSalvo);
+	}
 
 	$("td[data-length]").click(choseShip);
 	$("td[data-location1]").click(placeShipsOnTheMap);
@@ -37,13 +98,128 @@ function onDataReady(data) {
 	$("#boardClear").click(clearTheBoard);
 }
 
-//to be sent to the back end
-var shipLength = 0;
-var shipClass = "";
-var shipClassElement;
-var locationsArr = [];
-var shipsArr = [];
-var arr = [];
+
+
+// to print history table
+//test if this prints sample data correctly
+function printHistoryTable(data) {
+	//var queryObj = parseQueryObject();
+	var myOutput = "";
+	var enemyOutput = "";
+
+
+	$.each(data.history, function (index) {
+		// each user in an arr history
+		var obj = data.history[index];
+		// this is me 
+		if (queryObj.gp == obj.gpid) {
+			for (var n = 0; n < obj.action.length; n++) {
+				myOutput += Mustache.render($("#myTemplate").html(), obj.action[n]);
+			}
+			// this is the enemy user
+		} else if (queryObj.gp != obj.gpid) {
+			for (var i = 0; i < obj.action.length; i++) {
+				enemyOutput += Mustache.render($("#myTemplate").html(), obj.action[i]);
+			}
+		} 
+	});
+	
+	
+	// output both separately
+	$("#output").html(myOutput);
+	$("#output2").html(enemyOutput);
+}
+
+function shootHighlight() {
+	if (salvo.length >= 5) {
+		return false;
+	}
+	// this is so that it isnt possible to highlight the numbers on the left 
+	if (!$(this).hasClass("fields")) {
+		return false;
+	}
+	// remove coloring classes and clear arr on a new hover
+	for (var i = 0; i < arr.length; i++) {
+		arr[i].removeClass("highlight");
+		arr[i].removeClass("overlap");
+	}
+	//clearing the arr
+	arr = [];
+	// otherwise highlighting the current 
+	var current = $(this).attr("data-location2");
+	$("td[data-location2='" + current + "']").addClass("highlight");
+	arr.push($("td[data-location2='" + current + "']"));
+}
+
+function shootAdd() {
+	// arr to salvo arr
+	var current = $(this).attr("data-location2");
+
+	// this is so that it isnt possible to shoot the numbers on the left 
+	if (!$(this).hasClass("fields")) {
+		return false;
+	}
+
+	//removing from the salvo arr and highlight
+	if ($(this).hasClass("shot")) {
+		$("td[data-location2='" + current + "']").removeClass("shot");
+
+		for (var i = 0; i < salvo.length; ++i) {
+			if (salvo[i] == current) {
+				salvo.splice(i, 1);
+				return false
+			}
+		}
+	}
+
+	//dont add if they have 5 shots in a salvo
+	if (salvo.length >= 5) {
+		return false;
+	}
+
+
+	for (var key in myData.salvos) {
+		if (myData.id == key) {
+			// my shots
+			var x = myData.salvos[key];
+			for (var key2 in x) {
+				// shots per turn 
+				var oom = x[key2];
+				for (var y = 0; y < oom.length; y++) {
+					// every shot in a turn
+					if (oom[y] == current) {
+						console.log("You may not shoot previously shot locations");
+						return false
+					}
+				}
+			}
+		}
+	}
+
+	$("td[data-location2='" + current + "']").addClass("shot");
+	salvo.push(current);
+}
+
+function sendSalvo() {
+	//var queryObj = parseQueryObject();
+	// making sure they submit 5 shots in a salvo
+	if (salvo.length != 5) {
+		console.log("First you need to select exactly 5 salvos");
+		return false;
+	}
+
+	$.post({
+		url: "/api/games/players/" + queryObj.gp + "/salvos",
+		data: JSON.stringify(salvo),
+		dataType: "json",
+		contentType: "application/json"
+	}).done(function () {
+		location.reload();
+		console.log("You have sent your salvo!");
+	}).fail(function () {
+		console.log("You failed sending salvo!");
+	});
+}
 
 function toGames() {
 	location.assign("/web/games.html");
@@ -89,7 +265,6 @@ function hoverHighlight() {
 				for (var j = 0; j < shipLength; ++j) {
 					var letter = nextLetter[j].slice(0, 1);
 					var location = letter + currentNumber;
-					console.log(location);
 					$("td[data-location1='" + location + "']").addClass("highlight");
 					// add to an arr to remember what to clear
 					arr.push($("td[data-location1='" + location + "']"));
@@ -143,7 +318,6 @@ function hoverHighlight() {
 				}
 			}
 		}
-		console.log(test2);
 	}
 }
 
@@ -171,7 +345,6 @@ function isOverEdge(toCheck) {
 
 function isOverEdgeVertical(toCheck) {
 	var numbers = ["11", "12", "13", "14", "15", "16"];
-	console.log(toCheck);
 	var num = toCheck.slice(1);
 	for (var i = 0; i < numbers.length; ++i) {
 		if (numbers[i] == num) {
@@ -265,12 +438,9 @@ function placeShipsOnTheMap() {
 		//clearing the highlight after a ship's been placed
 		shipLength = 0;
 		shipClass = "";
-		
+
 	}
 }
-
-
-
 
 function addtoShipsObj() {
 	//creating a ships obj and adding it to ships arr(that will be sent to back)
@@ -295,7 +465,7 @@ function paintShipOnTheMap(location) {
 
 function sendShips() {
 	console.log("What you send is : " + shipsArr);
-	var queryObj = parseQueryObject();
+	//var queryObj = parseQueryObject();
 	console.log("You are sending this number of ships: " + shipsArr.length);
 	if (shipsArr.length == 5) {
 		$.post({
@@ -340,7 +510,6 @@ function renderTables(str) {
 }
 
 function renderShips(data, tableSelector) {
-	//console.log("Im trying to render ships");
 	var $map = $(tableSelector).find(".fields");
 	for (var i = 0; i < data.ships.length; ++i) {
 		for (var k = 0; k < data.ships[i].locations.length; ++k) {
@@ -358,7 +527,7 @@ function renderPlayerInfo(data) {
 
 	var youPlayer = "";
 	var otherPlayer = "";
-	var queryObj = parseQueryObject();
+	//var queryObj = parseQueryObject();
 
 	for (var i = 0; i < data.game_players.length; ++i) {
 		if (youPlayer === "") {
@@ -377,7 +546,7 @@ function renderPlayerInfo(data) {
 }
 
 function renderSalvos(data, tableSelector) {
-	var queryObj = parseQueryObject();
+	//var queryObj = parseQueryObject();
 	for (var key in data.salvos) {
 		//my shots on the enemy map
 		if (key == queryObj.gp) {
