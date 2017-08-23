@@ -53,15 +53,15 @@ public class SalvoController {
 
     @RequestMapping(path = "/games", method = RequestMethod.POST)
     public ResponseEntity<Object> createGame(Authentication authentication) {
-        Map<String, Object> response = new HashMap<>();
+        final Map<String, Object> response = new HashMap<>();
         if (isGuest(authentication)) {
             response.put("error", "please log in");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         } else {
             final Player player = currentAuthedUser(authentication);
-            Game newGame = new Game();
+            final Game newGame = new Game();
             gameRepository.save(newGame);
-            GamePlayer firstGamePlayer = new GamePlayer(player, newGame);
+            final GamePlayer firstGamePlayer = new GamePlayer(player, newGame);
             gamePlayerRepository.save(firstGamePlayer);
             response.put("gpid", firstGamePlayer.getId());
             return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -71,13 +71,13 @@ public class SalvoController {
     @RequestMapping(path = "/games", method = RequestMethod.GET)
     public Map<String, Object> getGames(Authentication authentication) {
 
-        List<Object> gamesDto = gameRepository
+        final List<Object> gamesDto = gameRepository
                 .findAll()
                 .stream()
                 .map(g -> makeGameDTO(g))
                 .collect(toList());
 
-        Map<String, Object> finalDto = new LinkedHashMap<>();
+        final Map<String, Object> finalDto = new LinkedHashMap<>();
         if (isGuest(authentication)) {
             finalDto.put("user", "unidentified user");
             finalDto.put("games", gamesDto);
@@ -85,7 +85,7 @@ public class SalvoController {
             return finalDto;
         }
 
-        Player user = currentAuthedUser(authentication);
+        final Player user = currentAuthedUser(authentication);
         if (user != null) {
             finalDto.put("user", makePlayerDto(user));
         }
@@ -101,14 +101,13 @@ public class SalvoController {
     public ResponseEntity<Object> gameView(@PathVariable long gamePlayerId,
                                            Authentication authentication) {
 
-        Map<String, Object> toReturn = new LinkedHashMap<>();
-        List<Object> gamePlayers = new ArrayList<>();
-        List<Object> locations = new ArrayList<>();
-        List<Object> history = new ArrayList<>();
-
+        final Map<String, Object> toReturn = new LinkedHashMap<>();
+        final List<Object> gamePlayers = new ArrayList<>();
+        final List<Object> locations = new ArrayList<>();
+        final List<Object> history = new ArrayList<>();
 
         // game player has id in the repository
-        GamePlayer currentGamePlayer = gamePlayerRepository.findOne(gamePlayerId);
+        final GamePlayer currentGamePlayer = gamePlayerRepository.findOne(gamePlayerId);
 
         // the user is not logged in (a guest)
         if (isGuest(authentication)) {
@@ -123,19 +122,16 @@ public class SalvoController {
         }
 
         // the current authed user
-        Player player = currentAuthedUser(authentication);
-
-
+        final Player player = currentAuthedUser(authentication);
 
         // check if he has id of the url in his set
         if (player != null && checkPlayerHasGamePlayerWithId(player, gamePlayerId)) {
             toReturn.put("id", currentGamePlayer.getGame().getGameId());
             toReturn.put("creation_date", currentGamePlayer.getGame().getGameCreationDate());
-            Map<Long, Object> playerSalvos = new LinkedHashMap<>();
+            final Map<Long, Object> playerSalvos = new LinkedHashMap<>();
 
             for (GamePlayer gp : currentGamePlayer.getGame().getGamePlayers()) {
                 gamePlayers.add(makeGamePlayerDto(gp));
-                //creating history objs
                 history.add(makeHistoryDto(gp));
                 playerSalvos.put(gp.getId(), makeSalvoDto(gp));
             }
@@ -161,9 +157,9 @@ public class SalvoController {
     public ResponseEntity<Object> joinGame(@PathVariable long gameId,
                                            Authentication authentication) {
         // getting the current player
-        Player user = currentAuthedUser(authentication);
+        final Player user = currentAuthedUser(authentication);
         // response to be returned
-        Map<String, Object> response = new HashMap<>();
+        final Map<String, Object> response = new HashMap<>();
 
         // checking if there is a user logged in if not return Unauthorized
         if (isGuest(authentication)) {
@@ -172,7 +168,7 @@ public class SalvoController {
         }
 
         // getting the game with the necessary ID. if there isn't return forbidden
-        Game gameToJoin = gameRepository.findOne(gameId);
+        final Game gameToJoin = gameRepository.findOne(gameId);
         if (gameToJoin == null) {
             response.put("error", "No such game");
             return new ResponseEntity<Object>(response, HttpStatus.FORBIDDEN);
@@ -185,11 +181,11 @@ public class SalvoController {
         }
 
 
-        GamePlayer newGameplayer = new GamePlayer(user, gameToJoin);
+        final GamePlayer newGameplayer = new GamePlayer(user, gameToJoin);
         gamePlayerRepository.save(newGameplayer);
 
         //including new game player's ID
-        Long gpid = newGameplayer.getId();
+        final Long gpid = newGameplayer.getId();
         response.put("gpid", gpid);
         return new ResponseEntity<Object>(response, HttpStatus.CREATED);
     }
@@ -199,9 +195,9 @@ public class SalvoController {
                                               Authentication authentication,
                                               @RequestBody List<Ship> ships) {
         // getting the current player
-        Player user = currentAuthedUser(authentication);
+        final Player user = currentAuthedUser(authentication);
         // response to be returned
-        Map<String, Object> response = new HashMap<>();
+        final Map<String, Object> response = new HashMap<>();
 
         // checking if there is a user logged in if not return Unauthorized
         if (isGuest(authentication)) {
@@ -210,7 +206,7 @@ public class SalvoController {
         }
 
         // getting the game player with the necessary ID. if there isn't return Unauthorized
-        GamePlayer gamePlayer = gamePlayerRepository.findOne(gamePlayerId);
+        final GamePlayer gamePlayer = gamePlayerRepository.findOne(gamePlayerId);
         if (gamePlayer == null) {
             response.put("error", "No such game player");
             return new ResponseEntity<Object>(response, HttpStatus.UNAUTHORIZED);
@@ -242,9 +238,9 @@ public class SalvoController {
                                               Authentication authentication,
                                               @RequestBody List<String> salvo) {
         // getting the current player
-        Player user = currentAuthedUser(authentication);
+        final Player user = currentAuthedUser(authentication);
         // response to be returned
-        Map<String, Object> response = new HashMap<>();
+        final Map<String, Object> response = new HashMap<>();
 
         // checking if there is a user logged in if not return Unauthorized
         if (isGuest(authentication)) {
@@ -253,7 +249,7 @@ public class SalvoController {
         }
 
         // getting the game player with the necessary ID. if there isn't return Unauthorized
-        GamePlayer gamePlayer = gamePlayerRepository.findOne(gamePlayerId);
+        final GamePlayer gamePlayer = gamePlayerRepository.findOne(gamePlayerId);
         if (gamePlayer == null) {
             response.put("error", "No such game player");
             return new ResponseEntity<Object>(response, HttpStatus.UNAUTHORIZED);
@@ -266,15 +262,16 @@ public class SalvoController {
         }
 
         // checking if the user has already added salvos
-        if (gamePlayer.getSalvo().size() != 0) {
+        // change
+        /*if (gamePlayer.getSalvo().size() != 0) {
             response.put("error", "the user has already submitted salvos");
             return new ResponseEntity<Object>(response, HttpStatus.FORBIDDEN);
-        }
+        }*/
 
         // create an int with the turn number to be increased. Just the number
         Integer currentTurnNumber = 1;
         // all my salvos
-        Set<Salvo> salvoSet = gamePlayer.getSalvo();
+        final Set<Salvo> salvoSet = gamePlayer.getSalvo();
         // We need to find the salvo with the highest turn number value
         // if there is 0 in the salvoSet it means it is the 1st
         for (Salvo salvo1: salvoSet) {
@@ -283,14 +280,14 @@ public class SalvoController {
             }
         }
 
-        // Here currentTurnNumber has the value of the las turn
+        // currentTurnNumber has the value of the last turn
         // if salvoSet is empty it means it is the first turn and it
         // is 1 and shouldn't be incremented
         if (!salvoSet.isEmpty()) {
             currentTurnNumber++;
         }
 
-        Salvo mySalvo = new Salvo(gamePlayer, salvo, currentTurnNumber);
+        final Salvo mySalvo = new Salvo(gamePlayer, salvo, currentTurnNumber);
         salvoRepository.save(mySalvo);
         response.put("success", "the salvos have been successfuly placed");
         return new ResponseEntity<Object>(response, HttpStatus.CREATED);
@@ -298,59 +295,75 @@ public class SalvoController {
 
 
     private Map<Object, Object> makeHistoryDto (GamePlayer gamePlayer) {
+        final Map<Object,Object> dto = new HashMap<>();
 
-        //this will be returned
-        Map<Object,Object> dto = new HashMap<>();
-        // getting my shot locations and enemy ship locations
-        Set<Salvo> mySet = gamePlayer.getSalvo();
-        // i need the ships of the other game player
-        Set<Ship> enemyShips = getOtherShips(gamePlayer);
-        // this will be an array of turns
-        List<Object> turnsArr = new ArrayList<>();
-        // this is each turn
-        Map<Object,Object> turn = new HashMap<>();
+        // my salvos compared and ordered by turn number
+        final List<Salvo> salvos = gamePlayer.getSalvo().stream()
+                .sorted(Comparator.comparingInt(Salvo::getTurnNumber))
+                .collect(toList());
 
-        // itirate through both salvos and ships and if they match add the obj to hits
-        for (Salvo sv : mySet) {
+        // enemy ships
+        final Set<Ship> enemyShips = getOtherShips(gamePlayer);
+        // array of turns
+        final List<Object> turnsArr = new ArrayList<>();
 
-            //putting the turn number
-            turn.put("turn", sv.getTurnNumber());
-            //arr figure out how many have sunk
-            turn.put("sunk", getSunk(enemyShips, sv));
-            // Adding locations that are hit to hit arr and adding them to turn
-            turn.put("hit", getHits(enemyShips, sv));
-            // number of ships left
-            turn.put("left", gamePlayer.getShips().size());
-
-            // adding this turn to turns arr
-            turnsArr.add(turn);
+        // this is the map with the ships with ships and ints for rem locations
+        // every salvo submit we recount everything
+        final Map<Ship,Integer> remainingShipLocations = new HashMap<>();
+        for (Ship ship : enemyShips) {
+            remainingShipLocations.put(ship, ship.getLocations().size());
         }
 
+        for (Salvo salvo : salvos) {
+            // this is each turn
+            final Map<String,Object> turn = new LinkedHashMap<>();
+
+            turn.put("turn", salvo.getTurnNumber());
+            turn.put("hit", getHits(enemyShips, salvo));
+            turn.put("sunk", getSunk(enemyShips, salvo, remainingShipLocations));
+            turn.put("left", getLeft(remainingShipLocations));
+
+            // adding turn to turns arr
+            turnsArr.add(turn);
+        }
         dto.put("gpid", gamePlayer.getId());
         dto.put("action", turnsArr);
         return dto;
     }
 
+        private Integer getLeft (Map<Ship, Integer> remainingShipLocations) {
+        int left = 0;
+        for (Integer remainingShipLocation : remainingShipLocations.values()) {
+            if (remainingShipLocation != 0) {
+                ++left;
+            }
+        }
+        return left;
+    }
+
     // recieve my salvos and enemy ships
-    private List<String> getSunk(Set<Ship> enemyShips, Salvo sv) {
+    private List<String> getSunk(Set<Ship> enemyShips, Salvo sv, Map<Ship, Integer> remainingShipLocations) {
         // this will have the "sunk" ships
         final List<String> sunk = new ArrayList<>();
         //each ship
         for (Ship enemyShip : enemyShips) {
             // it's size number
-            Integer shipSize = enemyShip.getLocations().size();
+            Integer shipSize = remainingShipLocations.get(enemyShip);
             // my shots
             for (String shotLocation : sv.getShotLocations() ) {
                 // ship locations
                 for (String shipLocation : enemyShip.getLocations()) {
                     // if the ship has been completely destroyed add it to the SUNK
                     if ( shotLocation.equals(shipLocation) ) {
-                        // check if it is destroyed
-                        if (shipSize == 0) {
-                            sunk.add(enemyShip.getShipClass().toString());
-                        }
                         // if not decrement the number
                         shipSize--;
+                        remainingShipLocations.put(enemyShip, shipSize);
+                        // check if it is destroyed
+                        if (shipSize == 0) {
+                            // it is sunk, do stuff
+                            String ship = enemyShip.getShipClass().toString();
+                            sunk.add(ship);
+                        }
                     }
                 }
             }
@@ -373,7 +386,7 @@ public class SalvoController {
     }
 
     private Set<Ship> getOtherShips(GamePlayer gamePlayer) {
-        Set<GamePlayer> gp = gamePlayer.getGame().getGamePlayers();
+        final Set<GamePlayer> gp = gamePlayer.getGame().getGamePlayers();
         for (GamePlayer gamep : gp) {
             // if one of them is not me
             if (gamePlayer.getId() != gamep.getId()) {
@@ -386,8 +399,8 @@ public class SalvoController {
 
 
     private Map<Integer, Object> makeSalvoDto(GamePlayer gamePlayer) {
-        Map<Integer, Object> dto = new HashMap<>();
-        Set<Salvo> mySet = gamePlayer.getSalvo();
+        final Map<Integer, Object> dto = new HashMap<>();
+        final Set<Salvo> mySet = gamePlayer.getSalvo();
         for (Salvo sv : mySet) {
             dto.put(sv.getTurnNumber(), sv.getShotLocations());
         }
@@ -398,20 +411,20 @@ public class SalvoController {
         final Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", game.getGameId());
         dto.put("date", game.getDate());
-        List<Object> gamePlayerDtos = game.getGamePlayers().stream().map(gp -> makeGamePlayerDto(gp)).collect(toList());
+        final List<Object> gamePlayerDtos = game.getGamePlayers().stream().map(gp -> makeGamePlayerDto(gp)).collect(toList());
         dto.put("gamePlayers", gamePlayerDtos);
         return dto;
     }
 
     private Map<String, Object> makeGamePlayerDto(GamePlayer gamePlayer) {
-        Map<String, Object> gamePlayerDto = new LinkedHashMap<>();
+        final Map<String, Object> gamePlayerDto = new LinkedHashMap<>();
         gamePlayerDto.put("id", gamePlayer.getId());
         gamePlayerDto.put("player", makePlayerDto(gamePlayer.getPlayer()));
         return gamePlayerDto;
     }
 
     private Map<String, Object> makeScoresDto() {
-        Map<String, Object> playerScoresDto = new LinkedHashMap<>();
+        final Map<String, Object> playerScoresDto = new LinkedHashMap<>();
         playerRepository.findAll()
                 .stream()
                 .forEach(player -> playerScoresDto.put(player.getUserName(), makeScoreDto(player)));
@@ -419,12 +432,12 @@ public class SalvoController {
     }
 
     private Map<String, Object> makeScoreDto(Player player) {
-        Map<String, Object> userScoreCount = new HashMap<>();
+        final Map<String, Object> userScoreCount = new HashMap<>();
         double total = 0;
         double won = 0;
         double lost = 0;
         double tied = 0;
-        Set<Score> playerScoreSet = player.getScores();
+        final Set<Score> playerScoreSet = player.getScores();
         for (Score ps : playerScoreSet) {
             if (ps.getPoints() == 1.0) {
                 won++;
@@ -446,14 +459,14 @@ public class SalvoController {
     }
 
     private Map<String, Object> makePlayerDto(Player player) {
-        Map<String, Object> playerDto = new LinkedHashMap<>();
+        final Map<String, Object> playerDto = new LinkedHashMap<>();
         playerDto.put("id", player.getUserId());
         playerDto.put("email", player.getUserName());
         return playerDto;
     }
 
     private Map<String, Object> makeShipDto(Ship ship) {
-        Map<String, Object> shipDto = new LinkedHashMap<>();
+        final Map<String, Object> shipDto = new LinkedHashMap<>();
         shipDto.put("type", ship.getShipClass());
         shipDto.put("locations", ship.getLocations());
         return shipDto;
@@ -487,6 +500,5 @@ public class SalvoController {
         String stringToConvert = String.valueOf(o);
         Long convertedLong = Long.parseLong(stringToConvert);
         return convertedLong;
-
     }
 }

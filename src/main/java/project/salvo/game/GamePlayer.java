@@ -46,6 +46,7 @@ public class GamePlayer {
     public Date getGamePlayerCreationDate (){
         return gamePlayerCreationDate;
     }
+
     public void setGamePlayerCreationDate(Date gamePlayerCreationDate) {
         this.gamePlayerCreationDate = gamePlayerCreationDate;
     }
@@ -53,6 +54,7 @@ public class GamePlayer {
     public Game getGame() {
         return game;
     }
+
     public void setGame(Game game) {
         this.game = game;
     }
@@ -64,6 +66,7 @@ public class GamePlayer {
     public Set<Ship> getShips() {
         return ships;
     }
+
     public void setShips(Set<Ship> ships) {
         this.ships = ships;
     }
@@ -71,6 +74,7 @@ public class GamePlayer {
     public Set<Salvo> getSalvo() {
         return locations;
     }
+
     public void setSalvo(Set<Salvo> salvo) {
         this.locations = salvo;
     }
@@ -78,6 +82,7 @@ public class GamePlayer {
     public Player getPlayer() {
         return player;
     }
+
     public void setPlayer(Player player) {
         this.player = player;
     }

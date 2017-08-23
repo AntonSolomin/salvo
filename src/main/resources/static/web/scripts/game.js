@@ -8,7 +8,6 @@ var locationsArr = [];
 var shipsArr = [];
 var arr = [];
 var salvo = [];
-var salvoLongTimeStorage = [];
 
 
 $(function () {
@@ -216,9 +215,12 @@ function sendSalvo() {
 	}).done(function () {
 		location.reload();
 		console.log("You have sent your salvo!");
+		salvo = [];
 	}).fail(function () {
 		console.log("You failed sending salvo!");
 	});
+	
+	
 }
 
 function toGames() {
