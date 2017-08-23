@@ -66,6 +66,8 @@ var test = {
 function onDataReady(data) {
 	//hiding the enemy map until we submit the ships 
 	$("#salvosMap").hide();
+	$("#hist").hide();
+	$("#shooting").hide();
 	myData = data;
 
 	console.log(data);
@@ -76,18 +78,25 @@ function onDataReady(data) {
 	renderSalvos(data, "#yourShipsMap");
 	renderPlayerInfo(data);
 	printHistoryTable(data);
-
+	
 	//after reload if ships have been placed we enter here
 	if (data.ships.length !== 0) {
 		$("#salvosMap").show();
 		$("#submitShips").hide();
 		$("#boardClear").hide();
+		$("#vertical").hide();
+		$("#choice").hide();
+		$("#vertical").remove();
+		$("#label").remove();
 		$(".ship").hide();
 		$("#message").html("Prepare for battle");
 		$("#shooting").show();
+		$("#hist").show();
 		$("td[data-location2]").mouseover(shootHighlight);
 		$("td[data-location2]").click(shootAdd);
 		$("#submitShots").click(sendSalvo);
+		$("#shooting").show();
+
 	}
 
 	$("td[data-length]").click(choseShip);
@@ -175,8 +184,6 @@ function shootAdd() {
 	if (salvo.length >= 5) {
 		return false;
 	}
-
-
 	for (var key in myData.salvos) {
 		if (myData.id == key) {
 			// my shots

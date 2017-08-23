@@ -1,3 +1,15 @@
+#hist {
+	display: flex;
+	justify-content: center;
+}
+
+#controls,
+#message,
+#shooting{
+	display: flex;
+	justify-content: center;
+}
+
 #yourShipsMap td {
 	border: 1px solid black;
 	width: 20px;
@@ -68,10 +80,6 @@
 .overlap {
 	background-color: red;
 }
-
-#shooting{
-	display: none;
-} 
 
 .shot {
 	background-color: yellow;

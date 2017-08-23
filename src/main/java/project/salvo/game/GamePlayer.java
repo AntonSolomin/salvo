@@ -27,7 +27,7 @@ public class GamePlayer {
     private Set<Ship> ships = new HashSet<>();
 
     @OneToMany(mappedBy="gamePlayer", fetch = FetchType.EAGER)
-    private Set<Salvo> locations = new HashSet<>();
+    private Set<Salvo> salvos = new HashSet<>();
 
     private Date gamePlayerCreationDate;
 
@@ -72,11 +72,11 @@ public class GamePlayer {
     }
 
     public Set<Salvo> getSalvo() {
-        return locations;
+        return salvos;
     }
 
     public void setSalvo(Set<Salvo> salvo) {
-        this.locations = salvo;
+        this.salvos = salvo;
     }
 
     public Player getPlayer() {
@@ -89,7 +89,8 @@ public class GamePlayer {
 
     public void addShip(Ship newShip){ships.add(newShip);}
 
-    public void addSalvo(Salvo newSalvo){locations.add(newSalvo);}
+    public void addSalvo(Salvo newSalvo){
+        salvos.add(newSalvo);}
 
     public long getId () {return this.gamePlayerId;}
 

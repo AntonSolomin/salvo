@@ -1,82 +1,26 @@
-#yourShipsMap td {
-	border: 1px solid black;
-	width: 20px;
-	height: 20px;
-}
-
-#yourShipsMap td[data-location="side"] {
-	border: none;
-}
-
-#maps{
-	display: flex;
-	justify-content: center;
-}
-
-#salvosMap td {
-	border: 1px solid black;
-	width: 20px;
-	height: 20px;
-}
-
-#salvosMap td[data-location="side"] {
-	border: none;
-}
-
-#title {
-	display: flex;
-	justify-content: center;
-}
-
-#info {
-	display: flex;
-	justify-content: center;
-}
-
-.hit {
-	margin: 0;
-	border: 1px solid black;
-	border-radius: 10px;
-	background-color: red;
-	text-align: center;
-}
-
-#logout {
-	float: right;
-}
 
 
-#choice td {
-	border: 1px solid black;
-	background-color: black;
-	width: 20px;
-	height: 20px;
-}
-
-.highlight {
-	background-color: gray;
-}
-
-.placed {
-	background-color: green;
-}
-
-.hide{
-	visibility: hidden;
-}
-
-.overlap {
-	background-color: red;
-}
-
-#shooting{
+#back {
 	display: none;
-} 
-
-.shot {
-	background-color: yellow;
 }
 
-table, th, td {
-	border: 1px solid black;
+.jumbotron {
+	background-image: url(https://s-media-cache-ak0.pinimg.com/originals/d1/5e/ff/d15eff93dde29024d763e3cb2a665f25.jpg);
+	background-position: center;
+	height: 200px;
+}
+
+#top {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 50px;
+}
+
+#greetings {
+	display: flex;
+	justify-content: center;
+}
+
+.btn-login-form {
+	width: 150px;
 }

@@ -6,7 +6,6 @@ $(function () {
 	$("#back").click(displayBackToLogIn);
 	$("#register").click(registerUser);
 	$("#newGame").click(newGame);
-
 	$("#login").css("display", "none");
 	$.getJSON("/api/games", onDataReady).fail(function () {
 		$("#login").show();
@@ -14,14 +13,32 @@ $(function () {
 });
 
 function onDataReady(data) {
+	$("#submitlogout").hide();
+	$("#newGame").hide();
+
 	console.log(data);
 	displayGreetings(data);
 	renderGames(data);
 	$(".joinGame").click(joinGame);
+	$(".backGame").click(backToGame);
 	renderLeaderboard(data);
 
+	$(".joinGame").hide();
+	
+	$("#games").attr('class', 'col-sm-5');
+	$("#leaderBoard").attr('class', 'col-sm-4');
+	
+	if (data.user !== "unidentified user") {
+		$("#submitlogout").show();
+		$("#newGame").show();
+		$(".joinGame").show();
+		$("#games").attr('class', 'col-sm-6');
+		$("#leaderBoard").attr('class', 'col-sm-6');
+	};
+	
+	
+	
 }
-
 
 
 function newGame() {
@@ -29,7 +46,6 @@ function newGame() {
 		location.assign("/web/game.html?gp=" + data.gpid);
 	});
 }
-
 
 function joinGame() {
 	$.post("/api/games/" + $(this).attr("data-game-id") + "/players").done(function (data) {
@@ -41,19 +57,34 @@ function joinGame() {
 	});
 }
 
+function backToGame () {
+	window.location = 'game.html?gp=' + $(this).attr("data-gamePlayer-id");
+}
+
 function renderGames(data) {
 	var output = "";
 	for (var i = 0; i < data.games.length; i++) {
 		var myDate = new Date(data.games[i].date);
-
 		output += "<li>";
 		output += "<a" + addIdToLink(data.user, data.games[i]) + ">";
 		output += "Game: " + data.games[i].id + " " + myDate.toDateString();
 		output += "</a>";
-		output += "<button type='button' class='btn btn-default joinGame' data-game-id=" + data.games[i].id + ">" + "Join Game" + "</button>";
-
+		// checking who is in the game and if one of the users is make back button
+		if (data.games[i].gamePlayers.length == 1) {
+			if (data.games[i].gamePlayers[0].player.id  != data.user.id) {
+				output += "<button type='button' class='btn btn-default joinGame' data-game-id=" + data.games[i].id + ">" + "Join Game" + "</button>";
+			} else {
+				output += "<button type='button' class='btn btn-default backGame' data-gamePlayer-id=" + data.games[i].gamePlayers[0].id + ">" + "Back to the Game" + "</button>";
+			}
+		} else {
+			for (var j = 0; j<data.games[i].gamePlayers.length; ++j) {
+				if (data.games[i].gamePlayers[j].player.id == data.user.id) {
+					output += "<button type='button' class='btn btn-default backGame' data-gamePlayer-id=" + data.games[i].gamePlayers[j].id + ">" + "Back to the Game" + "</button>";
+				}
+			}
+		}
 		for (var j = 0; j < data.games[i].gamePlayers.length; ++j) {
-			output += "<br/>" + " Player: " + data.games[i].gamePlayers[j].player.email + ". ";
+			output += "<br/>" + " Player: " + data.games[i].gamePlayers[j].player.email;
 		}
 		output += "</li>";
 	}
@@ -100,16 +131,14 @@ function logIn() {
 	$.post("/api/login", obj).done(function () {
 		$.getJSON("/api/games", onDataReady);
 		$("#submitlogout").show();
-		$("#games").attr('class', 'col-sm-6');
-		$("#leaderBoard").attr('class', 'col-sm-6');
+		
 	});
 }
 
 function logOut() {
 	$.post("/api/logout").done(function () {
 		$.getJSON("/api/games", onDataReady);
-		$("#games").attr('class', 'col-sm-5');
-		$("#leaderBoard").attr('class', 'col-sm-4');
+		
 		location.reload();
 	});
 }
