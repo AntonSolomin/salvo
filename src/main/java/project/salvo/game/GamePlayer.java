@@ -15,6 +15,10 @@ public class GamePlayer {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long gamePlayerId;
 
+    private boolean firstGamePlayer = false;
+
+
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
     private Game game;
@@ -36,6 +40,11 @@ public class GamePlayer {
     }
 
     public GamePlayer(Player inputPlayer, Game inputGame) {
+        //checking if the gp is first in the game
+        if (inputGame.getGamePlayers().size() == 0) {
+            firstGamePlayer = true;
+        }
+
         gamePlayerCreationDate = new Date();
         game = inputGame;
         player = inputPlayer;
@@ -93,5 +102,13 @@ public class GamePlayer {
         salvos.add(newSalvo);}
 
     public long getId () {return this.gamePlayerId;}
+
+    public boolean isFirstGamePlayer() {
+        return firstGamePlayer;
+    }
+
+    public void setFirstGamePlayer(boolean firstGamePlayer) {
+        this.firstGamePlayer = firstGamePlayer;
+    }
 
 }

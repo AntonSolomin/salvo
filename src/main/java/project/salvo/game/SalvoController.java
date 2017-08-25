@@ -130,19 +130,28 @@ public class SalvoController {
             toReturn.put("creation_date", currentGamePlayer.getGame().getGameCreationDate());
             final Map<Long, Object> playerSalvos = new LinkedHashMap<>();
 
+            //this is the guy who will go first
+            // change
+            for (GamePlayer gp : currentGamePlayer.getGame().getGamePlayers()) {
+                if (gp.isFirstGamePlayer()) {
+                    toReturn.put("first", gp.getId());
+                }
+            }
+
+
             for (GamePlayer gp : currentGamePlayer.getGame().getGamePlayers()) {
                 gamePlayers.add(makeGamePlayerDto(gp));
                 history.add(makeHistoryDto(gp));
                 playerSalvos.put(gp.getId(), makeSalvoDto(gp));
+
             }
             for (Ship sp : currentGamePlayer.getShips()) {
                 locations.add(makeShipDto(sp));
             }
+
             toReturn.put("salvos", playerSalvos);
             toReturn.put("game_players", gamePlayers);
             toReturn.put("ships", locations);
-
-            // adding history to the gameview
             toReturn.put("history", history);
 
             return new ResponseEntity<Object>(toReturn, HttpStatus.OK);
@@ -181,11 +190,11 @@ public class SalvoController {
         }
 
 
-        final GamePlayer newGameplayer = new GamePlayer(user, gameToJoin);
-        gamePlayerRepository.save(newGameplayer);
+        final GamePlayer newGamePlayer = new GamePlayer(user, gameToJoin);
+        gamePlayerRepository.save(newGamePlayer);
 
         //including new game player's ID
-        final Long gpid = newGameplayer.getId();
+        final Long gpid = newGamePlayer.getId();
         response.put("gpid", gpid);
         return new ResponseEntity<Object>(response, HttpStatus.CREATED);
     }
@@ -263,6 +272,7 @@ public class SalvoController {
 
         // checking if the user has already added salvos
         // change
+        // compare turn numbers
         /*if (gamePlayer.getSalvo().size() != 0) {
             response.put("error", "the user has already submitted salvos");
             return new ResponseEntity<Object>(response, HttpStatus.FORBIDDEN);
@@ -292,7 +302,6 @@ public class SalvoController {
         response.put("success", "the salvos have been successfuly placed");
         return new ResponseEntity<Object>(response, HttpStatus.CREATED);
     }
-
 
     private Map<Object, Object> makeHistoryDto (GamePlayer gamePlayer) {
         final Map<Object,Object> dto = new HashMap<>();
@@ -384,6 +393,18 @@ public class SalvoController {
         }
         return hits;
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
     private Set<Ship> getOtherShips(GamePlayer gamePlayer) {
         final Set<GamePlayer> gp = gamePlayer.getGame().getGamePlayers();

@@ -8,7 +8,8 @@ var locationsArr = [];
 var shipsArr = [];
 var arr = [];
 var salvo = [];
-
+var link;
+var refreshing;
 
 $(function () {
 	$("#submitlogout").click(logOutRedirect);
@@ -17,51 +18,10 @@ $(function () {
 	queryObj = parseQueryObject();
 	if (queryObj.hasOwnProperty("gp")) {
 		var id = queryObj.gp;
-		var link = "/api/game_view/" + id;
+		link = "/api/game_view/" + id;
 		$.getJSON(link, onDataReady);
 	}
 });
-
-
-var test = {
-	"history": [
-		{
-			"gpid": 5,
-			"action": [
-				{
-					"turn": 1,
-					"sunk": ["BATTLESHIP", "ELSE"],
-					"hit": ["A2", "A3", "A4"],
-					"left": 3
-			},
-				{
-					"turn": 2,
-					"sunk": ["GKOGE", "GENOGE"],
-					"hit": ["C2", "C3", "C4"],
-					"left": 4
-			}
-			],
-		},
-		{
-			"gpid": 99,
-			"action": [
-				{
-					"turn": 1,
-					"sunk": ["FIRST", "GEGE"],
-					"hit": ["N2", "N3", "N4"],
-					"left": 5
-			},
-				{
-					"turn": 2,
-					"sunk": ["KKKKKK", "LLLLLLL"],
-					"hit": ["F2", "F3", "F4"],
-					"left": 4
-			}
-			]
-
-		}
-	]
-};
 
 function onDataReady(data) {
 	//hiding the enemy map until we submit the ships 
@@ -89,33 +49,99 @@ function onDataReady(data) {
 		$("#vertical").remove();
 		$("#label").remove();
 		$(".ship").hide();
-		$("#message").html("Prepare for battle");
 		$("#shooting").show();
 		$("#hist").show();
 		$("td[data-location2]").mouseover(shootHighlight);
 		$("td[data-location2]").click(shootAdd);
 		$("#submitShots").click(sendSalvo);
 		$("#shooting").show();
-
 	}
-
+	
 	$("td[data-length]").click(choseShip);
 	$("td[data-location1]").click(placeShipsOnTheMap);
 	$("td[data-location1]").mouseover(hoverHighlight);
 	$("#submitShips").click(sendShips);
 	$("#boardClear").click(clearTheBoard);
+	
+	turns(data);
+}
+
+function turns(data) {
+	
+	// turn numbers for both players
+	var myTurnNumber = 1;
+	var enemyTurnNumber = 1;
+	for (var gpid in data.salvos) {
+		for (var key in data.salvos[gpid]) {
+			if (queryObj.gp == gpid) {
+				//+key turns a string with a number into an integer 
+				myTurnNumber = +key + 1;
+			} else {
+				enemyTurnNumber = +key + 1;
+			}
+		}
+	}
+	
+	// number of ships each player has left 
+	var myShipsLeft;
+	var enemyShipsLeft;
+	for (var i = 0; i<data.history.length; ++i) {
+		if (queryObj.gp == data.history[i].gpid) {
+			for (var j = 0; j<data.history[i].action.length;++j) {
+				if (data.history[i].action[j].left <= enemyShipsLeft || enemyShipsLeft == undefined) {
+					// how many ships i still have to sink of the enemy
+					enemyShipsLeft = data.history[i].action[j].left;	
+				}
+			}
+		} else {
+			for (var l = 0; l<data.history[i].action.length;++l) {
+				if (data.history[i].action[l].left <= myShipsLeft || myShipsLeft == undefined) {
+					myShipsLeft = data.history[i].action[l].left;
+				}
+			}
+		}
+	}
+	
+	// changing/disabling buttons, depending on whose turn is it 
+	if (myTurnNumber == enemyTurnNumber && data.first == queryObj.gp) {
+		$("#submitShots").css("background-color", "green");
+		$("#submitShots").html("Your Turn");
+		$("#submitShots").removeAttr("disabled");
+		//$("#message").html("It is your turn! Select 5 squares and click 'End Turn'. ");
+	} else if (myTurnNumber < enemyTurnNumber) {
+		$("#submitShots").css("background-color", "green");
+		$("#submitShots").html("Your Turn");
+		$("#submitShots").removeAttr("disabled");
+		//$("#message").html("It is your turn! Select 5 squares and click 'End Turn'. ");
+	} else {
+		$("#submitShots").css("background-color", "yellow");
+		$("#submitShots").html("Enemy Turn");
+		$('#submitShots').attr("disabled", "disabled")
+		$("#message").html("Wait for the enemy to shoot.");
+		if (data.ships.length != 0) {
+			setTimeout(function() { console.log("interval function");$.getJSON(link, onDataReady); }, 5000);
+		}
+	}
+	
+	// ending game
+	if (enemyShipsLeft == 0 && enemyShipsLeft != undefined) {
+		$("#gameInfo").html("You won!");
+		$('#submitShots').hide();
+	} else if (myShipsLeft == 0) {
+		$("#gameInfo").html("You lost! :( ");
+		$('#submitShots').hide();
+	}
+	
+	console.log("My turn number: " + myTurnNumber);
+	console.log("Enemy turn number: " + enemyTurnNumber);
+	console.log("My ships left: " + myShipsLeft);
+	console.log("Enemy ships left: " + enemyShipsLeft);
 }
 
 
-
-// to print history table
-//test if this prints sample data correctly
 function printHistoryTable(data) {
-	//var queryObj = parseQueryObject();
 	var myOutput = "";
 	var enemyOutput = "";
-
-
 	$.each(data.history, function (index) {
 		// each user in an arr history
 		var obj = data.history[index];
@@ -131,8 +157,6 @@ function printHistoryTable(data) {
 			}
 		} 
 	});
-	
-	
 	// output both separately
 	$("#output").html(myOutput);
 	$("#output2").html(enemyOutput);
@@ -162,7 +186,6 @@ function shootHighlight() {
 function shootAdd() {
 	// arr to salvo arr
 	var current = $(this).attr("data-location2");
-
 	// this is so that it isnt possible to shoot the numbers on the left 
 	if (!$(this).hasClass("fields")) {
 		return false;
@@ -171,7 +194,6 @@ function shootAdd() {
 	//removing from the salvo arr and highlight
 	if ($(this).hasClass("shot")) {
 		$("td[data-location2='" + current + "']").removeClass("shot");
-
 		for (var i = 0; i < salvo.length; ++i) {
 			if (salvo[i] == current) {
 				salvo.splice(i, 1);
@@ -207,13 +229,11 @@ function shootAdd() {
 }
 
 function sendSalvo() {
-	//var queryObj = parseQueryObject();
 	// making sure they submit 5 shots in a salvo
 	if (salvo.length != 5) {
 		console.log("First you need to select exactly 5 salvos");
 		return false;
 	}
-
 	$.post({
 		url: "/api/games/players/" + queryObj.gp + "/salvos",
 		data: JSON.stringify(salvo),
@@ -226,8 +246,6 @@ function sendSalvo() {
 	}).fail(function () {
 		console.log("You failed sending salvo!");
 	});
-	
-	
 }
 
 function toGames() {
@@ -283,7 +301,6 @@ function hoverHighlight() {
 						// add to an arr to remember what to clear
 						arr.push($("td[data-location1='" + location + "']").addClass("overlap"));
 					}
-
 				}
 				// printing whole ships red if they go over the edge
 				for (var u = 0; u < test.length; u++) {
@@ -303,7 +320,6 @@ function hoverHighlight() {
 		for (var m = 0; m < shipLength; m++) {
 			// loc is the locations of the ship
 			var loc = currentLetter[0] + currentN;
-
 			// highlighting locations
 			$("td[data-location1='" + loc + "']").addClass("highlight");
 			// saving location to clear after
@@ -474,7 +490,6 @@ function paintShipOnTheMap(location) {
 
 function sendShips() {
 	console.log("What you send is : " + shipsArr);
-	//var queryObj = parseQueryObject();
 	console.log("You are sending this number of ships: " + shipsArr.length);
 	if (shipsArr.length == 5) {
 		$.post({
@@ -536,7 +551,6 @@ function renderPlayerInfo(data) {
 
 	var youPlayer = "";
 	var otherPlayer = "";
-	//var queryObj = parseQueryObject();
 
 	for (var i = 0; i < data.game_players.length; ++i) {
 		if (youPlayer === "") {
@@ -555,7 +569,6 @@ function renderPlayerInfo(data) {
 }
 
 function renderSalvos(data, tableSelector) {
-	//var queryObj = parseQueryObject();
 	for (var key in data.salvos) {
 		//my shots on the enemy map
 		if (key == queryObj.gp) {
