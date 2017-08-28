@@ -14,6 +14,10 @@ var refreshing;
 $(function () {
 	$("#submitlogout").click(logOutRedirect);
 	$("#redirectToGames").click(toGames);
+	$("#submitShots").click(sendSalvo);
+	$("#submitShips").click(sendShips);
+	$("#boardClear").click(clearTheBoard);
+
 	//getting correct link
 	queryObj = parseQueryObject();
 	if (queryObj.hasOwnProperty("gp")) {
@@ -39,7 +43,10 @@ function onDataReady(data) {
 	renderPlayerInfo(data);
 	printHistoryTable(data);
 	
-	//after reload if ships have been placed we enter here
+
+
+	// page appearence
+	// after reload if ships have been placed we enter here
 	if (data.ships.length !== 0) {
 		$("#salvosMap").show();
 		$("#submitShips").hide();
@@ -51,22 +58,31 @@ function onDataReady(data) {
 		$(".ship").hide();
 		$("#shooting").show();
 		$("#hist").show();
-		$("td[data-location2]").mouseover(shootHighlight);
-		$("td[data-location2]").click(shootAdd);
-		$("#submitShots").click(sendSalvo);
 		$("#shooting").show();
 	}
-	
+
 	$("td[data-length]").click(choseShip);
 	$("td[data-location1]").click(placeShipsOnTheMap);
 	$("td[data-location1]").mouseover(hoverHighlight);
-	$("#submitShips").click(sendShips);
-	$("#boardClear").click(clearTheBoard);
-	
+	$("td[data-location2]").mouseover(shootHighlight);
+	$("td[data-location2]").click(shootAdd);
+
+	// turns logic
 	turns(data);
 }
 
 function turns(data) {
+	$("#submitShots").hide();
+	// message here to let user kow he is waiting for the enemy to place ships
+	// refreching for the first turn to get the enemy ships before firing
+	if (data.enemyShipsPlaced == false && data.first == queryObj.gp && data.ships.length !=0) {
+		setTimeout(function () {$.getJSON(link, onDataReady);}, 5000);	
+	}
+	
+	if (data.enemyShipsPlaced == true) {
+		$("#submitShots").show();	
+		// here delete the wait message
+	}
 	
 	// turn numbers for both players
 	var myTurnNumber = 1;
@@ -81,27 +97,27 @@ function turns(data) {
 			}
 		}
 	}
-	
+
 	// number of ships each player has left 
 	var myShipsLeft;
 	var enemyShipsLeft;
-	for (var i = 0; i<data.history.length; ++i) {
+	for (var i = 0; i < data.history.length; ++i) {
 		if (queryObj.gp == data.history[i].gpid) {
-			for (var j = 0; j<data.history[i].action.length;++j) {
+			for (var j = 0; j < data.history[i].action.length; ++j) {
 				if (data.history[i].action[j].left <= enemyShipsLeft || enemyShipsLeft == undefined) {
 					// how many ships i still have to sink of the enemy
-					enemyShipsLeft = data.history[i].action[j].left;	
+					enemyShipsLeft = data.history[i].action[j].left;
 				}
 			}
 		} else {
-			for (var l = 0; l<data.history[i].action.length;++l) {
+			for (var l = 0; l < data.history[i].action.length; ++l) {
 				if (data.history[i].action[l].left <= myShipsLeft || myShipsLeft == undefined) {
 					myShipsLeft = data.history[i].action[l].left;
 				}
 			}
 		}
 	}
-	
+
 	// changing/disabling buttons, depending on whose turn is it 
 	if (myTurnNumber == enemyTurnNumber && data.first == queryObj.gp) {
 		$("#submitShots").css("background-color", "green");
@@ -118,11 +134,13 @@ function turns(data) {
 		$("#submitShots").html("Enemy Turn");
 		$('#submitShots').attr("disabled", "disabled")
 		$("#message").html("Wait for the enemy to shoot.");
-		if (data.ships.length != 0) {
-			setTimeout(function() { console.log("interval function");$.getJSON(link, onDataReady); }, 5000);
+		if (data.ships.length != 0 || data.enemyShipsPlaced == false) {
+			setTimeout(function () {
+				$.getJSON(link, onDataReady);
+			}, 5000);
 		}
 	}
-	
+
 	// ending game
 	if (enemyShipsLeft == 0 && enemyShipsLeft != undefined) {
 		$("#gameInfo").html("You won!");
@@ -131,13 +149,13 @@ function turns(data) {
 		$("#gameInfo").html("You lost! :( ");
 		$('#submitShots').hide();
 	}
-	
+
 	console.log("My turn number: " + myTurnNumber);
 	console.log("Enemy turn number: " + enemyTurnNumber);
 	console.log("My ships left: " + myShipsLeft);
 	console.log("Enemy ships left: " + enemyShipsLeft);
+	console.log("Enemy ships placed: " + data.enemyShipsPlaced);
 }
-
 
 function printHistoryTable(data) {
 	var myOutput = "";
@@ -155,7 +173,7 @@ function printHistoryTable(data) {
 			for (var i = 0; i < obj.action.length; i++) {
 				enemyOutput += Mustache.render($("#myTemplate").html(), obj.action[i]);
 			}
-		} 
+		}
 	});
 	// output both separately
 	$("#output").html(myOutput);
@@ -386,6 +404,10 @@ function choseShip() {
 }
 
 function placeShipsOnTheMap() {
+	// making it not possible to place ships without selecting them first
+	if (shipClass == "") {
+		return false;	
+	}
 
 	var alphabet = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 	//getting the start location
@@ -463,7 +485,6 @@ function placeShipsOnTheMap() {
 		//clearing the highlight after a ship's been placed
 		shipLength = 0;
 		shipClass = "";
-
 	}
 }
 

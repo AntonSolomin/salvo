@@ -56,7 +56,7 @@ public class SalvoApplication {
             playerRepository.save(p5);
             playerRepository.save(p6);
 
-            gameRepository.save(new Game());
+            //gameRepository.save(new Game());
 
             final Game mySecondGame = new Game();
             mySecondGame.addSeconds(3600);

@@ -5,9 +5,10 @@
 }
 
 .jumbotron {
-	background-image: url(https://s-media-cache-ak0.pinimg.com/originals/d1/5e/ff/d15eff93dde29024d763e3cb2a665f25.jpg);
+	background-image: url(http://i2.cdn.cnn.com/cnnnext/dam/assets/170126112222-russian-aircraft-carrier-admiral-kuznetsov-01-25-full-169.jpg);
 	background-position: center;
 	height: 200px;
+	
 }
 
 #top {
@@ -16,11 +17,55 @@
 	margin-bottom: 50px;
 }
 
+#newGame {
+	width: 150px;
+}
+
 #greetings {
 	display: flex;
 	justify-content: center;
+	color: white;
 }
 
 .btn-login-form {
 	width: 150px;
+}
+
+#logOutBtn {
+	margin-top: none;
+	display: flex;
+	align-items: flex-start;
+	justify-content:space-between;
+	
+}
+
+#jumbo {
+	padding: 0;
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+#leaderBoard {
+
+}
+tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+tr:hover {
+	background-color: #e7ebd8;
+}
+
+td {
+	padding: 10px;
+	text-align: center;
+}
+
+th {
+	padding-bottom: 10px;
+	text-align: center;
+}
+
+tr:nth-child(1)> td {
+	font-weight: bolder;
 }

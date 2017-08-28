@@ -105,6 +105,7 @@ public class SalvoController {
         final List<Object> gamePlayers = new ArrayList<>();
         final List<Object> locations = new ArrayList<>();
         final List<Object> history = new ArrayList<>();
+        boolean placedShips = false;
 
         // game player has id in the repository
         final GamePlayer currentGamePlayer = gamePlayerRepository.findOne(gamePlayerId);
@@ -131,13 +132,11 @@ public class SalvoController {
             final Map<Long, Object> playerSalvos = new LinkedHashMap<>();
 
             //this is the guy who will go first
-            // change
             for (GamePlayer gp : currentGamePlayer.getGame().getGamePlayers()) {
                 if (gp.isFirstGamePlayer()) {
                     toReturn.put("first", gp.getId());
                 }
             }
-
 
             for (GamePlayer gp : currentGamePlayer.getGame().getGamePlayers()) {
                 gamePlayers.add(makeGamePlayerDto(gp));
@@ -145,12 +144,22 @@ public class SalvoController {
                 playerSalvos.put(gp.getId(), makeSalvoDto(gp));
 
             }
+
             for (Ship sp : currentGamePlayer.getShips()) {
                 locations.add(makeShipDto(sp));
             }
 
+            for (GamePlayer gp : currentGamePlayer.getGame().getGamePlayers()) {
+                if (gp.getId() != currentGamePlayer.getId()){
+                    if (gp.getShips().size() != 0) {
+                        placedShips = true;
+                    }
+                }
+            }
+
             toReturn.put("salvos", playerSalvos);
             toReturn.put("game_players", gamePlayers);
+            toReturn.put("enemyShipsPlaced", placedShips);
             toReturn.put("ships", locations);
             toReturn.put("history", history);
 
@@ -278,9 +287,10 @@ public class SalvoController {
             return new ResponseEntity<Object>(response, HttpStatus.FORBIDDEN);
         }*/
 
-        // create an int with the turn number to be increased. Just the number
-        Integer currentTurnNumber = 1;
-        // all my salvos
+        // create an int with the turn number to be increased.
+        Integer currentTurnNumber = gamePlayer.getSalvo().size() + 1;
+
+        /*// all my salvos
         final Set<Salvo> salvoSet = gamePlayer.getSalvo();
         // We need to find the salvo with the highest turn number value
         // if there is 0 in the salvoSet it means it is the 1st
@@ -295,7 +305,7 @@ public class SalvoController {
         // is 1 and shouldn't be incremented
         if (!salvoSet.isEmpty()) {
             currentTurnNumber++;
-        }
+        }*/
 
         final Salvo mySalvo = new Salvo(gamePlayer, salvo, currentTurnNumber);
         salvoRepository.save(mySalvo);

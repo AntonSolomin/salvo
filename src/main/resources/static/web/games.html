@@ -11,47 +11,58 @@
 </head>
 
 
+<body>
+	<div class="container">
+		<div class="jumbotron" id="jumbo">
+			<div id="logOutBtn">
+				<p id="greetings"></p>
+				<button id="submitlogout" type="button" class="btn btn-primary">Log Out</button>
+			</div>
+		</div>
+
+		<div id="top">
+			<button id="newGame" type="button" class="btn btn-primary">New Game</button>
+		</div>
 
 
-<body >
-
-  <div class="jumbotron"></div>
-  <p id="greetings"></p>
-	<div id="top">
-		<button id="newGame" type="button" class="btn btn-default btn-login-form">New Game</button>
-		<button id="submitlogout" type="button" class="btn btn-default btn-login-form">Log Out</button>
-	</div>
-	
-	
-	
-	
-  <div class="container">
 		<form id="login" class="col-sm-3">
-		<div class="form-group">
-			<label for="email">Email address:</label>
-			<input type="email" class="form-control" id="email">
-		</div>
-		<div class="form-group">
-			<label for="pwd">Password:</label>
-			<input type="password" class="form-control" id="pwd">
-		</div>
-		<div id="checkbox" class="checkbox">
-			<label><input  type="checkbox"> Remember me</label>
-		</div>
-		<button id="submit" type="button" class="btn btn-default btn-login-form">Submit</button>
-		<button id="newUser" type="button" class="btn btn-default btn-login-form">New user</button>
-		<button id="register" type="button" class="btn btn-default btn-login-form">Register and enter</button>
-		<button id="back" type="button" class="btn btn-default btn-login-form">Go Back to Log In</button>
-	</form>
-  	<ol id="games" class="col-sm-5"></ol>
-		<table id="leaderBoard" class="col-sm-4"></table>
+			<div class="form-group">
+				<label for="email">Email address:</label>
+				<input type="email" class="form-control" id="email">
+			</div>
+			<div class="form-group">
+				<label for="pwd">Password:</label>
+				<input type="password" class="form-control" id="pwd">
+			</div>
+			<div id="checkbox" class="checkbox">
+				<label><input  type="checkbox"> Remember me</label>
+			</div>
+			<button id="submit" type="button" class="btn btn-default btn-login-form">Submit</button>
+			<button id="newUser" type="button" class="btn btn-default btn-login-form">New user</button>
+			<button id="register" type="button" class="btn btn-default btn-login-form">Register and enter</button>
+			<button id="back" type="button" class="btn btn-default btn-login-form">Go Back to Log In</button>
+		</form>
+		<ol id="games" class="col-sm-5"></ol>
 		
-		
-		
-		
+		<table id="leaderBoard" class="col-sm-4">
+			<thead>
+				<th>Player</th>
+				<th>Total Points</th>
+				<th>Won</th>
+				<th>Lost</th>
+				<th>Tied</th>
+			</thead>
+			<tbody id="leaderBoardResult"></tbody>
+		</table>
+		<table id="newGames">
+			<thead>
+				<tr>
+					<td></td>
+				</tr>
+			</thead>
+			<tbody id="gamesOutput"></tbody>
+		</table>
 	</div>
-
-
 
 	<script src="scripts/games.js" type="text/javascript"></script>
 </body>

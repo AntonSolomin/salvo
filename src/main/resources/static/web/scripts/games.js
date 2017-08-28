@@ -19,6 +19,7 @@ function onDataReady(data) {
 	console.log(data);
 	displayGreetings(data);
 	renderGames(data);
+	newRenderGames(data);
 	$(".joinGame").click(joinGame);
 	$(".backGame").click(backToGame);
 	renderLeaderboard(data);
@@ -72,14 +73,14 @@ function renderGames(data) {
 		// checking who is in the game and if one of the users is make back button
 		if (data.games[i].gamePlayers.length == 1) {
 			if (data.games[i].gamePlayers[0].player.id  != data.user.id) {
-				output += "<button type='button' class='btn btn-default joinGame' data-game-id=" + data.games[i].id + ">" + "Join Game" + "</button>";
+				output += "<button type='button' class='btn btn-default joinGame' data-game-id=" + data.games[i].id + ">" + "Join" + "</button>";
 			} else {
-				output += "<button type='button' class='btn btn-default backGame' data-gamePlayer-id=" + data.games[i].gamePlayers[0].id + ">" + "Back to the Game" + "</button>";
+				output += "<button type='button' class='btn btn-default backGame' data-gamePlayer-id=" + data.games[i].gamePlayers[0].id + ">" + "Return" + "</button>";
 			}
 		} else {
 			for (var j = 0; j<data.games[i].gamePlayers.length; ++j) {
 				if (data.games[i].gamePlayers[j].player.id == data.user.id) {
-					output += "<button type='button' class='btn btn-default backGame' data-gamePlayer-id=" + data.games[i].gamePlayers[j].id + ">" + "Back to the Game" + "</button>";
+					output += "<button type='button' class='btn btn-default backGame' data-gamePlayer-id=" + data.games[i].gamePlayers[j].id + ">" + "Return" + "</button>";
 				}
 			}
 		}
@@ -89,6 +90,13 @@ function renderGames(data) {
 		output += "</li>";
 	}
 	$("#games").html(output);
+}
+
+function newRenderGames (data) {
+	var output = "";
+	for (var i = 0; i < data.games.length; i++) {
+		output += "<td>";
+	}
 }
 
 function addIdToLink(user, game) {
@@ -104,13 +112,7 @@ function addIdToLink(user, game) {
 }
 
 function renderLeaderboard(data) {
-	var arrTh = ["Name", "Total", "Won", "Lost", "Tied"];
 	var output = "";
-	output += "<tr>";
-	for (var i = 0; i < arrTh.length; ++i) {
-		output += "<th>" + arrTh[i] + "</th>";
-	}
-	output += "</tr>";
 	for (var key in data.leaderboard) {
 		output += "<tr>";
 		output += "<td>" + key + "</td>";
@@ -120,7 +122,7 @@ function renderLeaderboard(data) {
 		output += "<td>" + data.leaderboard[key].tied + "</td>";
 		output += "</tr>";
 	}
-	$("#leaderBoard").html(output);
+	$("#leaderBoardResult").html(output);
 }
 
 function logIn() {
@@ -154,7 +156,7 @@ function displayGreetings(data) {
 		console.log("User is not logged in");
 		displayForms("#login", "inline");
 	} else if (data.user.email !== null) {
-		$("#greetings").html("Hello: " + data.user.email);
+		$("#greetings").html("Hello " + data.user.email);
 		displayForms("#logout", "inline");
 	}
 }
