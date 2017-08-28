@@ -42,7 +42,7 @@ function onDataReady(data) {
 	renderSalvos(data, "#yourShipsMap");
 	renderPlayerInfo(data);
 	printHistoryTable(data);
-	
+
 
 
 	// page appearence
@@ -75,15 +75,17 @@ function turns(data) {
 	$("#submitShots").hide();
 	// message here to let user kow he is waiting for the enemy to place ships
 	// refreching for the first turn to get the enemy ships before firing
-	if (data.enemyShipsPlaced == false && data.first == queryObj.gp && data.ships.length !=0) {
-		setTimeout(function () {$.getJSON(link, onDataReady);}, 5000);	
+	if (data.enemyShipsPlaced == false && data.first == queryObj.gp && data.ships.length != 0) {
+		setTimeout(function () {
+			$.getJSON(link, onDataReady);
+		}, 5000);
 	}
-	
+
 	if (data.enemyShipsPlaced == true) {
-		$("#submitShots").show();	
+		$("#submitShots").show();
 		// here delete the wait message
 	}
-	
+
 	// turn numbers for both players
 	var myTurnNumber = 1;
 	var enemyTurnNumber = 1;
@@ -150,11 +152,19 @@ function turns(data) {
 		$('#submitShots').hide();
 	}
 
+	var first;
+	if (queryObj.gp == data.first) {
+		first = true;
+	} else {
+		first = false;
+	}
+
 	console.log("My turn number: " + myTurnNumber);
 	console.log("Enemy turn number: " + enemyTurnNumber);
 	console.log("My ships left: " + myShipsLeft);
 	console.log("Enemy ships left: " + enemyShipsLeft);
 	console.log("Enemy ships placed: " + data.enemyShipsPlaced);
+	console.log("First? " + first);
 }
 
 function printHistoryTable(data) {
@@ -197,11 +207,19 @@ function shootHighlight() {
 	arr = [];
 	// otherwise highlighting the current 
 	var current = $(this).attr("data-location2");
+
+	if (isPreviouslyShot(current)) {
+		console.log("Has been shot before");
+		return false;
+	}
+	
 	$("td[data-location2='" + current + "']").addClass("highlight");
 	arr.push($("td[data-location2='" + current + "']"));
 }
 
 function shootAdd() {
+	// add here the logic to prevent selecting previous shots
+	
 	// arr to salvo arr
 	var current = $(this).attr("data-location2");
 	// this is so that it isnt possible to shoot the numbers on the left 
@@ -241,9 +259,28 @@ function shootAdd() {
 			}
 		}
 	}
-
+	if (isPreviouslyShot(current)) {
+		console.log("Again, it has been shot");
+		return false;	
+	}
 	$("td[data-location2='" + current + "']").addClass("shot");
 	salvo.push(current);
+}
+
+function isPreviouslyShot(current) {
+	for (var key in myData.salvos) {
+		if (queryObj.gp == key) {
+			for (var turn in myData.salvos[key]) {
+				var t = myData.salvos[key];
+				for (var i = 0; i < t[turn].length; ++i) {
+					if (current == t[turn][i]) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
 }
 
 function sendSalvo() {
@@ -406,7 +443,7 @@ function choseShip() {
 function placeShipsOnTheMap() {
 	// making it not possible to place ships without selecting them first
 	if (shipClass == "") {
-		return false;	
+		return false;
 	}
 
 	var alphabet = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -574,16 +611,10 @@ function renderPlayerInfo(data) {
 	var otherPlayer = "";
 
 	for (var i = 0; i < data.game_players.length; ++i) {
-		if (youPlayer === "") {
-			youPlayer += data.game_players[i].player.email;
-			if (data.game_players[i].id == queryObj.gp) {
-				youPlayer += " (You)";
-			}
+		if (queryObj.gp == data.game_players[i].id) {
+			youPlayer = data.game_players[i].player.email + " (You)";
 		} else {
-			otherPlayer += data.game_players[i].player.email;
-			if (data.game_players[i].id == queryObj.gp) {
-				otherPlayer += " (You) ";
-			}
+			otherPlayer += data.game_players[i].player.email + " (Enemy)";
 		}
 	}
 	$("#gameInfo").html(youPlayer + " <--VS--> " + otherPlayer);

@@ -1,4 +1,7 @@
-
+.backGame,
+.joinGame{
+	width: 100px;
+}
 
 #back {
 	display: none;
@@ -36,7 +39,6 @@
 	display: flex;
 	align-items: flex-start;
 	justify-content:space-between;
-	
 }
 
 #jumbo {
@@ -45,14 +47,11 @@
 	padding-right: 20px;
 }
 
-#leaderBoard {
-
-}
-tr:nth-child(even) {
+#leaderBoard tr:nth-child(even) {
 	background-color: #f2f2f2;
 }
 
-tr:hover {
+#leaderBoard tr:hover {
 	background-color: #e7ebd8;
 }
 
@@ -66,6 +65,6 @@ th {
 	text-align: center;
 }
 
-tr:nth-child(1)> td {
+#leaderBoard tr:nth-child(1)> td {
 	font-weight: bolder;
 }

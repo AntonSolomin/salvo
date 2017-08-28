@@ -6,111 +6,113 @@
 	<title>Game</title>
 	<script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.js" integrity="sha256-XDU6Po3hKjdQXJHRrKrWlIF/E6y6BBgV5eiqZSYePpo=" crossorigin="anonymous"></script>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	<link href="game.css" type="text/css" rel="stylesheet">
 </head>
 
-<body>
+<body class="container">
 
-	<form id="logout">
-		<button id="submitlogout" type="button" class="btn btn-default">log out</button>
-	</form>
-	<form id="backToGames">
-		<button id="redirectToGames" type="button" class="btn btn-default">Back to games</button>
-	</form>
+	<div class="jumbotron" id="jumbo">
+		<form id="backToGames">
+			<button id="redirectToGames" type="button" class="btn btn-primary">Back to games</button>
+		</form>
+		<form id="logout">
+			<button id="submitlogout" type="button" class="btn btn-primary">log out</button>
+		</form>
+	</div>
+
 	<div id="info">
 		<p id="gameInfo"></p>
 	</div>
+
 	<div id="maps">
-		
+
 		<table id="yourShipsMap"></table>
 		<!--selecting ships and vertical-->
 		<div id="controls">
-		<table id="choice">
-			<tr id="CARRIER" class="carrier ship">
-				<td data-length="5"></td>
-				<td data-length="5"></td>
-				<td data-length="5"></td>
-				<td data-length="5"></td>
-				<td data-length="5"></td>
-			</tr>
-			<tr id="BATTLESHIP" class="battleship ship">
-				<td data-length="4"></td>
-				<td data-length="4"></td>
-				<td data-length="4"></td>
-				<td data-length="4"></td>
-			</tr>
-			<tr id="SUBMARINE" class="submarine ship">
-				<td data-length="3"></td>
-				<td data-length="3"></td>
-				<td data-length="3"></td>
-			</tr>
-			<tr id="DESTROYER" class="destroyer ship">
-				<td data-length="2"></td>
-				<td data-length="2"></td>
-			</tr>
-			<tr id="PATROL_BOAT" class="boat ship">
-				<td data-length="1"></td>
-			</tr>
-		</table>
-		<div>
-			<input id="vertical" type="checkbox"><label for="vertical" id="label">Vertical</label>
-			<form>
-				<button id="submitShips" type="button" class="btn btn-default">Ships Ready!</button>
-			</form>
-			<form>
-				<button id="boardClear" type="button" class="btn btn-default">Clear the board.</button>
-			</form>
+			<div id="placingControls">
+				<div><input id="vertical" type="checkbox"> <label for="vertical" id="label">Vertical</label></div>
+				<form>
+					<button id="submitShips" type="button" class="btn btn-default">Ships Ready!</button>
+				</form>
+				<form>
+					<button id="boardClear" type="button" class="btn btn-default">Clear the board.</button>
+				</form>
+				<table id="choice">
+				<tr id="CARRIER" class="carrier ship">
+					<td data-length="5"></td>
+					<td data-length="5"></td>
+					<td data-length="5"></td>
+					<td data-length="5"></td>
+					<td data-length="5"></td>
+				</tr>
+				<tr id="BATTLESHIP" class="battleship ship">
+					<td data-length="4"></td>
+					<td data-length="4"></td>
+					<td data-length="4"></td>
+					<td data-length="4"></td>
+				</tr>
+				<tr id="SUBMARINE" class="submarine ship">
+					<td data-length="3"></td>
+					<td data-length="3"></td>
+					<td data-length="3"></td>
+				</tr>
+				<tr id="DESTROYER" class="destroyer ship">
+					<td data-length="2"></td>
+					<td data-length="2"></td>
+				</tr>
+				<tr id="PATROL_BOAT" class="boat ship">
+					<td data-length="1"></td>
+				</tr>
+			</table>
+			</div>
 		</div>
-	</div>
-		
 		<table id="salvosMap"></table>
 	</div>
 
-	<!--placeing ships controls-->
-	<p id="message"><!--Click on a ship to place it on the map--></p>
-
-	
-
-	<!--shooting controls-->
-	<div id="shooting">
+	<div id="shootingControls">
+		<p id="message"></p>
+		<div id="shooting">
 		<form>
 			<button id="submitShots" type="button" class="btn btn-default">Submit shots</button>
 		</form>
 	</div>
+	</div>
 
 	<!--history-->
 	<div id="hist">
-	<table>
-		<tr>
-			<th rowspan="2">Turn</th>
-			<th colspan="3">Hits By Me</th>
-		</tr>
-		<tr>
-			<td>Ship Type Sunk</td>
-			<td>Hits</td>
-			<td>Ships Left</td>
+		<table>
+			<tr>
+				<th rowspan="2">Turn</th>
+				<th colspan="3">Hits By Me</th>
+			</tr>
+			<tr>
+				<td>Ship Type Sunk</td>
+				<td>Hits</td>
+				<td>Ships Left</td>
 
-		</tr>
-		<tbody id="output">
+			</tr>
+			<tbody id="output">
 
-		</tbody>
-	</table>
-	<table>
-		<tr>
-			<th rowspan="2">Turn</th>
-			<th colspan="3">Hits By The Enemy</th>
-		</tr>
-		<tr>
-			<td>Ship Type Sunk</td>
-			<td>Hits</td>
-			<td>Ships Left</td>
-		</tr>
-		<tbody id="output2">
+			</tbody>
+		</table>
+		<table>
+			<tr>
+				<th rowspan="2">Turn</th>
+				<th colspan="3">Hits By The Enemy</th>
+			</tr>
+			<tr>
+				<td>Ship Type Sunk</td>
+				<td>Hits</td>
+				<td>Ships Left</td>
+			</tr>
+			<tbody id="output2">
 
-		</tbody>
-	</table>
+			</tbody>
+		</table>
 	</div>
-	
+
 	<script type="text/html" id="myTemplate">
 		<tr>
 			<td>{{turn}}</td>
