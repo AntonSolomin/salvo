@@ -17,8 +17,6 @@ public class GamePlayer {
 
     private boolean firstGamePlayer = false;
 
-
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
     private Game game;
@@ -52,7 +50,7 @@ public class GamePlayer {
         inputPlayer.addGamePlayer(this);
     }
 
-    public Date getGamePlayerCreationDate (){
+    public Date getGamePlayerCreationDate(){
         return gamePlayerCreationDate;
     }
 
@@ -64,11 +62,25 @@ public class GamePlayer {
         return game;
     }
 
+    public GamePlayer getEnemyGamePlayer() {
+        final Set<GamePlayer> gamePlayers = this.getGame().getGamePlayers();
+        GamePlayer theOtherGamePlayer = null;
+        for (GamePlayer gamePlayer1 : gamePlayers) {
+            // if one of them is not me
+            if (this.getId() != gamePlayer1.getId()) {
+                // then this is the other gp
+                theOtherGamePlayer = gamePlayer1;
+                break;
+            }
+        }
+        return theOtherGamePlayer;
+    }
+
     public void setGame(Game game) {
         this.game = game;
     }
 
-    public Set<Score> getScore () {
+    public Set<Score> getScore() {
         return player.getScores();
     }
 

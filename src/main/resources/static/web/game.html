@@ -21,17 +21,16 @@
 			<button id="submitlogout" type="button" class="btn btn-primary">log out</button>
 		</form>
 	</div>
-
+	
 	<div id="info">
-		<p id="gameInfo"></p>
+		<p id="playersInfo"></p>
+		<p id="message"></p>
 	</div>
 
 	<div id="maps">
-
 		<table id="yourShipsMap"></table>
 		<!--selecting ships and vertical-->
-		<div id="controls">
-			<div id="placingControls">
+		<div id="placingShipsControls">
 				<div><input id="vertical" type="checkbox"> <label for="vertical" id="label">Vertical</label></div>
 				<form>
 					<button id="submitShips" type="button" class="btn btn-default">Ships Ready!</button>
@@ -40,48 +39,43 @@
 					<button id="boardClear" type="button" class="btn btn-default">Clear the board.</button>
 				</form>
 				<table id="choice">
-				<tr id="CARRIER" class="carrier ship">
-					<td data-length="5"></td>
-					<td data-length="5"></td>
-					<td data-length="5"></td>
-					<td data-length="5"></td>
-					<td data-length="5"></td>
-				</tr>
-				<tr id="BATTLESHIP" class="battleship ship">
-					<td data-length="4"></td>
-					<td data-length="4"></td>
-					<td data-length="4"></td>
-					<td data-length="4"></td>
-				</tr>
-				<tr id="SUBMARINE" class="submarine ship">
-					<td data-length="3"></td>
-					<td data-length="3"></td>
-					<td data-length="3"></td>
-				</tr>
-				<tr id="DESTROYER" class="destroyer ship">
-					<td data-length="2"></td>
-					<td data-length="2"></td>
-				</tr>
-				<tr id="PATROL_BOAT" class="boat ship">
-					<td data-length="1"></td>
-				</tr>
-			</table>
+					<tr id="CARRIER" class="carrier ship">
+						<td data-length="5"></td>
+						<td data-length="5"></td>
+						<td data-length="5"></td>
+						<td data-length="5"></td>
+						<td data-length="5"></td>
+					</tr>
+					<tr id="BATTLESHIP" class="battleship ship">
+						<td data-length="4"></td>
+						<td data-length="4"></td>
+						<td data-length="4"></td>
+						<td data-length="4"></td>
+					</tr>
+					<tr id="SUBMARINE" class="submarine ship">
+						<td data-length="3"></td>
+						<td data-length="3"></td>
+						<td data-length="3"></td>
+					</tr>
+					<tr id="DESTROYER" class="destroyer ship">
+						<td data-length="2"></td>
+						<td data-length="2"></td>
+					</tr>
+					<tr id="PATROL_BOAT" class="boat ship">
+						<td data-length="1"></td>
+					</tr>
+				</table>
 			</div>
-		</div>
 		<table id="salvosMap"></table>
 	</div>
 
 	<div id="shootingControls">
-		<p id="message"></p>
-		<div id="shooting">
 		<form>
 			<button id="submitShots" type="button" class="btn btn-default">Submit shots</button>
 		</form>
 	</div>
-	</div>
 
-	<!--history-->
-	<div id="hist">
+	<div id="history">
 		<table>
 			<tr>
 				<th rowspan="2">Turn</th>

@@ -7,6 +7,10 @@
 	display: none;
 }
 
+#games {
+	border-left: 3px solid #a29c9c;
+}
+
 .jumbotron {
 	background-image: url(http://i2.cdn.cnn.com/cnnnext/dam/assets/170126112222-russian-aircraft-carrier-admiral-kuznetsov-01-25-full-169.jpg);
 	background-position: center;
@@ -45,6 +49,10 @@
 	padding: 0;
 	padding-left: 20px;
 	padding-right: 20px;
+}
+
+#leaderBoard {
+	border-left: 3px solid #a29c9c;
 }
 
 #leaderBoard tr:nth-child(even) {

@@ -10,9 +10,10 @@ var arr = [];
 var salvo = [];
 var link;
 var refreshing;
+var waiting;
 
 $(function () {
-	$("#submitlogout").click(logOutRedirect);
+	$("#submitlogout").click(logOut);
 	$("#redirectToGames").click(toGames);
 	$("#submitShots").click(sendSalvo);
 	$("#submitShips").click(sendShips);
@@ -28,13 +29,14 @@ $(function () {
 });
 
 function onDataReady(data) {
+	myData = data;
+	console.log(data);
+	
 	//hiding the enemy map until we submit the ships 
 	$("#salvosMap").hide();
-	$("#hist").hide();
-	$("#shooting").hide();
-	myData = data;
-
-	console.log(data);
+	$("#history").hide();
+	$("#submitShots").hide();
+	
 	renderTables(1);
 	renderTables(2);
 	renderShips(data, "#yourShipsMap");
@@ -42,8 +44,6 @@ function onDataReady(data) {
 	renderSalvos(data, "#yourShipsMap");
 	renderPlayerInfo(data);
 	printHistoryTable(data);
-
-
 
 	// page appearence
 	// after reload if ships have been placed we enter here
@@ -56,30 +56,49 @@ function onDataReady(data) {
 		$("#vertical").remove();
 		$("#label").remove();
 		$(".ship").hide();
-		$("#shooting").show();
-		$("#hist").show();
-		$("#shooting").show();
+		//$("#shooting").show();
+		$("#submitShots").show();
+		$("#history").show();
+		//$("#shooting").show();
+		$("#submitShots").show();
 	}
 
 	$("td[data-length]").click(choseShip);
 	$("td[data-location1]").click(placeShipsOnTheMap);
 	$("td[data-location1]").mouseover(hoverHighlight);
-	$("td[data-location2]").mouseover(shootHighlight);
-	$("td[data-location2]").click(shootAdd);
-
+	$("td[data-location1]").mouseleave(hoverUnhighlight);
+	
 	// turns logic
 	turns(data);
+	messages();
+	
+	if (waiting != true) {
+		$("td[data-location2]").mouseover(shootHighlight);
+		$("td[data-location2]").mouseleave(unhighlight);
+		$("td[data-location2]").click(shootAdd);	
+	}
 }
+
+function messages(){
+	if (myData.ships.length == 0) {
+		$("#message").html("Place the ships on the map.");
+		return true;
+	} 
+	if (myData.enemyShipsPlaced == false) {
+		$("#message").html("Waiting for the enemy to place ships.");	
+	}
+}
+
 
 function turns(data) {
 	$("#submitShots").hide();
 	// message here to let user kow he is waiting for the enemy to place ships
 	// refreching for the first turn to get the enemy ships before firing
-	if (data.enemyShipsPlaced == false && data.first == queryObj.gp && data.ships.length != 0) {
+	/*if (data.enemyShipsPlaced == false && data.first == queryObj.gp && data.ships.length != 0) {
 		setTimeout(function () {
 			$.getJSON(link, onDataReady);
 		}, 5000);
-	}
+	}*/
 
 	if (data.enemyShipsPlaced == true) {
 		$("#submitShots").show();
@@ -123,32 +142,35 @@ function turns(data) {
 	// changing/disabling buttons, depending on whose turn is it 
 	if (myTurnNumber == enemyTurnNumber && data.first == queryObj.gp) {
 		$("#submitShots").css("background-color", "green");
-		$("#submitShots").html("Your Turn");
+		$("#submitShots").html("End Turn");
 		$("#submitShots").removeAttr("disabled");
-		//$("#message").html("It is your turn! Select 5 squares and click 'End Turn'. ");
+		waiting = false;
+		$("#message").html("It is your turn! Select 5 squares and click 'End Turn'. ");
 	} else if (myTurnNumber < enemyTurnNumber) {
 		$("#submitShots").css("background-color", "green");
-		$("#submitShots").html("Your Turn");
+		$("#submitShots").html("End Turn");
 		$("#submitShots").removeAttr("disabled");
-		//$("#message").html("It is your turn! Select 5 squares and click 'End Turn'. ");
+		waiting = false;
+		$("#message").html("It is your turn! Select 5 squares and click 'End Turn'. ");
 	} else {
 		$("#submitShots").css("background-color", "yellow");
 		$("#submitShots").html("Enemy Turn");
 		$('#submitShots').attr("disabled", "disabled")
-		$("#message").html("Wait for the enemy to shoot.");
-		if (data.ships.length != 0 || data.enemyShipsPlaced == false) {
+		$("#message").html("Wait for the enemy to finish his turn.");
+		waiting = true;
+		/*if (data.ships.length != 0) {
 			setTimeout(function () {
 				$.getJSON(link, onDataReady);
 			}, 5000);
-		}
+		}*/
 	}
 
 	// ending game
 	if (enemyShipsLeft == 0 && enemyShipsLeft != undefined) {
-		$("#gameInfo").html("You won!");
+		$("#message").html("You won!");
 		$('#submitShots').hide();
 	} else if (myShipsLeft == 0) {
-		$("#gameInfo").html("You lost! :( ");
+		$("#message").html("You lost! :( ");
 		$('#submitShots').hide();
 	}
 
@@ -165,6 +187,7 @@ function turns(data) {
 	console.log("Enemy ships left: " + enemyShipsLeft);
 	console.log("Enemy ships placed: " + data.enemyShipsPlaced);
 	console.log("First? " + first);
+	console.log("Waiting? " + waiting);
 }
 
 function printHistoryTable(data) {
@@ -215,6 +238,10 @@ function shootHighlight() {
 	
 	$("td[data-location2='" + current + "']").addClass("highlight");
 	arr.push($("td[data-location2='" + current + "']"));
+}
+
+function unhighlight () {
+	$(this).removeClass("highlight");
 }
 
 function shootAdd() {
@@ -391,14 +418,22 @@ function hoverHighlight() {
 		// printing whole ships red if they go over the edge
 		for (var v = 0; v < test2.length; v++) {
 			if (isOverEdgeVertical(test2[v])) {
-				console.log("Paint!");
 				for (var g = 0; g < test2.length; g++) {
-
 					$("td[data-location1='" + test2[g] + "']").addClass("overlap");
 				}
 			}
 		}
 	}
+}
+
+function hoverUnhighlight () {
+	// remove coloring classes and clear arr on a new hover
+	for (var i = 0; i < arr.length; i++) {
+		arr[i].removeClass("highlight");
+		arr[i].removeClass("overlap");
+	}
+	//clearing the arr
+	arr = [];
 }
 
 function isOverlap(toCheck) {
@@ -617,7 +652,7 @@ function renderPlayerInfo(data) {
 			otherPlayer += data.game_players[i].player.email + " (Enemy)";
 		}
 	}
-	$("#gameInfo").html(youPlayer + " <--VS--> " + otherPlayer);
+	$("#playersInfo").html(youPlayer + " <--VS--> " + otherPlayer);
 }
 
 function renderSalvos(data, tableSelector) {
@@ -675,7 +710,7 @@ function parseQueryObject() {
 	return obj;
 }
 
-function logOutRedirect() {
+function logOut() {
 	$.post("/api/logout").done(function () {
 		location.replace("/web/games.html");
 	});

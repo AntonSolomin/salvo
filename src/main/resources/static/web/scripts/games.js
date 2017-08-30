@@ -131,7 +131,6 @@ function logIn() {
 	$.post("/api/login", obj).done(function () {
 		$.getJSON("/api/games", onDataReady);
 		$("#submitlogout").show();
-		
 	});
 }
 
