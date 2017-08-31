@@ -21,13 +21,13 @@ function onDataReady(data) {
 	renderGames(data);
 	$(".joinGame").click(joinGame);
 	$(".backGame").click(backToGame);
-	renderLeaderboard(data);
+	renderLeaderboard2(data);
 
 	$(".joinGame").hide();
-	
+
 	$("#games").attr('class', 'col-sm-5');
 	$("#leaderBoard").attr('class', 'col-sm-4');
-	
+
 	if (data.user != "unidentified user") {
 		$("#submitlogout").show();
 		$("#newGame").show();
@@ -36,7 +36,6 @@ function onDataReady(data) {
 		$("#leaderBoard").attr('class', 'col-sm-6');
 	};
 }
-
 
 function newGame() {
 	$.post("/api/games").done(function (data) {
@@ -54,44 +53,44 @@ function joinGame() {
 	});
 }
 
-function backToGame () {
+function backToGame() {
 	window.location = 'game.html?gp=' + $(this).attr("data-gamePlayer-id");
 }
 
-function renderGames (data) {
+function renderGames(data) {
 	var output = "";
 	for (var i = 0; i < data.games.length; i++) {
 		var myDate = new Date(data.games[i].date);
-		
+
 		output += "<tr>";
-		
+
 		output += "<td>";
 		output += "<a" + addIdToLink(data.user, data.games[i]) + ">";
 		output += myDate.toDateString();
 		output += "</a>";
 		output += "</td>";
-		
+
 		output += "<td>";
 		for (var j = 0; j < data.games[i].gamePlayers.length; ++j) {
 			output += data.games[i].gamePlayers[j].player.email + "<br>";
 		}
 		output += "</td>";
-		
+
 		// checking who is in the game and if one of the users is make back button
 		if (data.games[i].gamePlayers.length == 1) {
-			if (data.games[i].gamePlayers[0].player.id  != data.user.id) {
+			if (data.games[i].gamePlayers[0].player.id != data.user.id) {
 				output += "<td><button type='button' class='btn btn-default joinGame' data-game-id=" + data.games[i].id + ">" + "Join" + "</button></td>";
 			} else {
 				output += "<td><button type='button' class='btn btn-default backGame' data-gamePlayer-id=" + data.games[i].gamePlayers[0].id + ">" + "Return" + "</button></td>";
 			}
 		} else {
-			for (var n = 0; n<data.games[i].gamePlayers.length; ++n) {
+			for (var n = 0; n < data.games[i].gamePlayers.length; ++n) {
 				if (data.games[i].gamePlayers[n].player.id == data.user.id) {
 					output += "<td><button type='button' class='btn btn-default backGame' data-gamePlayer-id=" + data.games[i].gamePlayers[n].id + ">" + "Return" + "</button></td>";
 				}
 			}
 		}
-		
+
 		output += "</tr>";
 	}
 	$("#games2").html(output);
@@ -123,6 +122,50 @@ function renderLeaderboard(data) {
 	$("#leaderBoardResult").html(output);
 }
 
+
+
+function renderLeaderboard2(data) {
+	var arr = [];
+	
+	//creating an arr of objects
+	for (var key in data.leaderboard) {
+		var obj = data.leaderboard[key];
+		obj.email = key;		
+		arr.push(obj);
+	}
+	
+	//sorting arr of objects
+	arr.sort(function (a, b) {
+		return b.total - a.total;
+	});
+	
+	
+	//adding medals
+	arr[0].medal = "<img  src='http://vignette3.wikia.nocookie.net/overwatch/images/4/44/Competitive_Gold_Icon.png/revision/latest?cb=20161122023755'>";
+	arr[1].medal = "<img  src='https://d1u1mce87gyfbn.cloudfront.net/game/rank-icons/season-2/rank-2.png'>";
+	arr[2].medal = "<img  src='https://d1u1mce87gyfbn.cloudfront.net/game/rank-icons/season-2/rank-1.png'>";
+	
+	var output = "";
+	for (var i = 0; i< arr.length; ++i) {
+		console.log(arr[i]);
+		output += "<tr>";
+		// adding empty td if theres no medal
+		// if there are no points there are no medals
+		if (arr[i].medal != undefined && arr[i].total != 0) {
+			output += "<td>" + arr[i].medal + "</td>";	
+		} else {
+			output += "<td>" + "</td>";
+		}
+		output += "<td>" + arr[i].email + "</td>";
+		output += "<td>" + arr[i].total + "</td>";
+		output += "<td>" + arr[i].won + "</td>";
+		output += "<td>" + arr[i].lost + "</td>";
+		output += "<td>" + arr[i].tied + "</td>";
+		output += "</tr>";
+	}
+	$("#leaderBoardResult").html(output);
+}
+
 function logIn() {
 	var obj = {
 		userName: $("#email").val(),
@@ -137,7 +180,7 @@ function logIn() {
 function logOut() {
 	$.post("/api/logout").done(function () {
 		$.getJSON("/api/games", onDataReady);
-		
+
 		location.reload();
 	});
 }

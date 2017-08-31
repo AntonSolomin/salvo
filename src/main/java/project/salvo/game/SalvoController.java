@@ -61,7 +61,7 @@ public class SalvoController {
             response.put("error", "please log in");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         } else {
-            final Player player = currentAuthedUser(authentication);
+            final Player player = currentAuthenticatedUser(authentication);
             final Game newGame = new Game();
             gameRepository.save(newGame);
             final GamePlayer firstGamePlayer = new GamePlayer(player, newGame);
@@ -88,7 +88,7 @@ public class SalvoController {
             return finalDto;
         }
 
-        final Player user = currentAuthedUser(authentication);
+        final Player user = currentAuthenticatedUser(authentication);
         if (user != null) {
             finalDto.put("user", makePlayerDto(user));
         }
@@ -125,7 +125,7 @@ public class SalvoController {
         }
 
         // the current authed user
-        final Player player = currentAuthedUser(authentication);
+        final Player player = currentAuthenticatedUser(authentication);
 
         // check if he has id of the url in his set
         if (player != null && checkPlayerHasGamePlayerWithId(player, gamePlayerId)) {
@@ -167,7 +167,7 @@ public class SalvoController {
     public ResponseEntity<Object> joinGame(@PathVariable long gameId,
                                            Authentication authentication) {
         // getting the current player
-        final Player user = currentAuthedUser(authentication);
+        final Player user = currentAuthenticatedUser(authentication);
         // response to be returned
         final Map<String, Object> response = new HashMap<>();
 
@@ -205,7 +205,7 @@ public class SalvoController {
                                               Authentication authentication,
                                               @RequestBody List<Ship> ships) {
         // getting the current player
-        final Player user = currentAuthedUser(authentication);
+        final Player user = currentAuthenticatedUser(authentication);
         // response to be returned
         final Map<String, Object> response = new HashMap<>();
 
@@ -248,7 +248,7 @@ public class SalvoController {
                                               Authentication authentication,
                                               @RequestBody List<String> salvo) {
         // getting the current player
-        final Player user = currentAuthedUser(authentication);
+        final Player user = currentAuthenticatedUser(authentication);
         // response to be returned
         final Map<String, Object> response = new HashMap<>();
 
@@ -499,8 +499,8 @@ public class SalvoController {
         return shipDto;
     }
 
-    private Player currentAuthedUser(Authentication auth) {
-        return playerRepository.findByUserName(auth.getName());
+    private Player currentAuthenticatedUser(Authentication authentication) {
+        return playerRepository.findByUserName(authentication.getName());
     }
 
     private boolean isGuest(Authentication authentication) {

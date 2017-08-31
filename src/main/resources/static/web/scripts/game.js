@@ -29,14 +29,17 @@ $(function () {
 });
 
 function onDataReady(data) {
+	//fun thing you can do with css vars
+	//$(":root").css("--borderBottom","100px");
+	
 	myData = data;
 	console.log(data);
-	
+
 	//hiding the enemy map until we submit the ships 
 	$("#salvosMap").hide();
 	$("#history").hide();
-	$("#submitShots").hide();
-	
+	$("#shootingControls").hide();
+
 	renderTables(1);
 	renderTables(2);
 	renderShips(data, "#yourShipsMap");
@@ -49,43 +52,36 @@ function onDataReady(data) {
 	// after reload if ships have been placed we enter here
 	if (data.ships.length !== 0) {
 		$("#salvosMap").show();
-		$("#submitShips").hide();
-		$("#boardClear").hide();
-		$("#vertical").hide();
-		$("#choice").hide();
-		$("#vertical").remove();
-		$("#label").remove();
+		$("#placingShipsControls").hide();
 		$(".ship").hide();
 		//$("#shooting").show();
-		$("#submitShots").show();
+		$("#shootingControls").show();
 		$("#history").show();
-		//$("#shooting").show();
-		$("#submitShots").show();
 	}
 
 	$("td[data-length]").click(choseShip);
 	$("td[data-location1]").click(placeShipsOnTheMap);
 	$("td[data-location1]").mouseover(hoverHighlight);
 	$("td[data-location1]").mouseleave(hoverUnhighlight);
-	
+
 	// turns logic
 	turns(data);
 	messages();
-	
+
 	if (waiting != true) {
 		$("td[data-location2]").mouseover(shootHighlight);
 		$("td[data-location2]").mouseleave(unhighlight);
-		$("td[data-location2]").click(shootAdd);	
+		$("td[data-location2]").click(shootAdd);
 	}
 }
 
-function messages(){
+function messages() {
 	if (myData.ships.length == 0) {
 		$("#message").html("Place the ships on the map.");
 		return true;
-	} 
+	}
 	if (myData.enemyShipsPlaced == false) {
-		$("#message").html("Waiting for the enemy to place ships.");	
+		$("#message").html("Waiting for the enemy to place ships.");
 	}
 }
 
@@ -94,11 +90,11 @@ function turns(data) {
 	$("#submitShots").hide();
 	// message here to let user kow he is waiting for the enemy to place ships
 	// refreching for the first turn to get the enemy ships before firing
-	/*if (data.enemyShipsPlaced == false && data.first == queryObj.gp && data.ships.length != 0) {
+	if (data.enemyShipsPlaced == false && data.first == queryObj.gp && data.ships.length != 0) {
 		setTimeout(function () {
 			$.getJSON(link, onDataReady);
 		}, 5000);
-	}*/
+	}
 
 	if (data.enemyShipsPlaced == true) {
 		$("#submitShots").show();
@@ -158,11 +154,11 @@ function turns(data) {
 		$('#submitShots').attr("disabled", "disabled")
 		$("#message").html("Wait for the enemy to finish his turn.");
 		waiting = true;
-		/*if (data.ships.length != 0) {
+		if (data.ships.length != 0) {
 			setTimeout(function () {
 				$.getJSON(link, onDataReady);
 			}, 5000);
-		}*/
+		}
 	}
 
 	// ending game
@@ -235,18 +231,18 @@ function shootHighlight() {
 		console.log("Has been shot before");
 		return false;
 	}
-	
+
 	$("td[data-location2='" + current + "']").addClass("highlight");
 	arr.push($("td[data-location2='" + current + "']"));
 }
 
-function unhighlight () {
+function unhighlight() {
 	$(this).removeClass("highlight");
 }
 
 function shootAdd() {
 	// add here the logic to prevent selecting previous shots
-	
+
 	// arr to salvo arr
 	var current = $(this).attr("data-location2");
 	// this is so that it isnt possible to shoot the numbers on the left 
@@ -288,7 +284,7 @@ function shootAdd() {
 	}
 	if (isPreviouslyShot(current)) {
 		console.log("Again, it has been shot");
-		return false;	
+		return false;
 	}
 	$("td[data-location2='" + current + "']").addClass("shot");
 	salvo.push(current);
@@ -426,7 +422,7 @@ function hoverHighlight() {
 	}
 }
 
-function hoverUnhighlight () {
+function hoverUnhighlight() {
 	// remove coloring classes and clear arr on a new hover
 	for (var i = 0; i < arr.length; i++) {
 		arr[i].removeClass("highlight");
@@ -650,9 +646,19 @@ function renderPlayerInfo(data) {
 			youPlayer = data.game_players[i].player.email + " (You)";
 		} else {
 			otherPlayer += data.game_players[i].player.email + " (Enemy)";
+
+
 		}
 	}
-	$("#playersInfo").html(youPlayer + " <--VS--> " + otherPlayer);
+	
+	console.log("ddddd" + otherPlayer);
+	if (otherPlayer = "") {
+		otherPlayer = "Your opponent has not joined the game yet";
+		
+	}
+
+	$("#youPlayer").html(youPlayer);
+	$("#otherPlayer").html(otherPlayer);
 }
 
 function renderSalvos(data, tableSelector) {

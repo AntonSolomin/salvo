@@ -95,7 +95,7 @@ public class SalvoApplication {
             salvoRepository.save(secondSalvo);
             salvoRepository.save(thirdSalvo);
 
-            final Score newScore = new Score(mySecondGame, p1, 1);
+            final Score newScore = new Score(mySecondGame, p3, 1);
             final Score newOtherScore = new Score(mySecondGame, p2, 0);
             scoreRepository.save(newScore);
             scoreRepository.save(newOtherScore);

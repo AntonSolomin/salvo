@@ -21,9 +21,13 @@
 			<button id="submitlogout" type="button" class="btn btn-primary">log out</button>
 		</form>
 	</div>
-	
-	<div id="info">
-		<p id="playersInfo"></p>
+
+	<div id="infoBox">
+		<div id="infoPlayers">
+			<p id="youPlayer"></p>
+			<p class="versus">VS</p>
+			<p id="otherPlayer"></p>
+		</div>
 		<p id="message"></p>
 	</div>
 
@@ -31,13 +35,15 @@
 		<table id="yourShipsMap"></table>
 		<!--selecting ships and vertical-->
 		<div id="placingShipsControls">
-				<div><input id="vertical" type="checkbox"> <label for="vertical" id="label">Vertical</label></div>
-				<form>
-					<button id="submitShips" type="button" class="btn btn-default">Ships Ready!</button>
-				</form>
-				<form>
-					<button id="boardClear" type="button" class="btn btn-default">Clear the board.</button>
-				</form>
+			<div><input id="vertical" type="checkbox"> <label for="vertical" id="label">Place Vertical</label></div>
+			<form>
+				<button id="submitShips" type="button" class="btn btn-default">Ships Ready!</button>
+			</form>
+			<form>
+				<button id="boardClear" type="button" class="btn btn-default">Clear the board.</button>
+			</form>
+
+			<div>
 				<table id="choice">
 					<tr id="CARRIER" class="carrier ship">
 						<td data-length="5"></td>
@@ -66,13 +72,13 @@
 					</tr>
 				</table>
 			</div>
+		</div>
+		<div id="shootingControls">
+			<form>
+				<button id="submitShots" type="button" class="btn btn-default">Submit shots</button>
+			</form>
+		</div>
 		<table id="salvosMap"></table>
-	</div>
-
-	<div id="shootingControls">
-		<form>
-			<button id="submitShots" type="button" class="btn btn-default">Submit shots</button>
-		</form>
 	</div>
 
 	<div id="history">
@@ -85,12 +91,10 @@
 				<td>Ship Type Sunk</td>
 				<td>Hits</td>
 				<td>Ships Left</td>
-
 			</tr>
-			<tbody id="output">
-
-			</tbody>
+			<tbody id="output"></tbody>
 		</table>
+		<p class="versus"> VS </p>
 		<table>
 			<tr>
 				<th rowspan="2">Turn</th>
@@ -101,12 +105,71 @@
 				<td>Hits</td>
 				<td>Ships Left</td>
 			</tr>
-			<tbody id="output2">
-
-			</tbody>
+			<tbody id="output2"></tbody>
 		</table>
 	</div>
+	<link href="https://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+<!--footer start from here-->
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 col-sm-6 footerleft ">
+        <div class="logofooter"> Logo</div>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.</p>
+        <p><i class="fa fa-map-pin"></i> 210, Aggarwal Tower, Rohini sec 9, New Delhi -        110085, INDIA</p>
+        <p><i class="fa fa-phone"></i> Phone (India) : +91 9999 878 398</p>
+        <p><i class="fa fa-envelope"></i> E-mail : info@webenlance.com</p>
+        
+      </div>
+      <div class="col-md-2 col-sm-6 paddingtop-bottom">
+        <h6 class="heading7">GENERAL LINKS</h6>
+        <ul class="footer-ul">
+          <li><a href="#"> Career</a></li>
+          <li><a href="#"> Privacy Policy</a></li>
+          <li><a href="#"> Terms & Conditions</a></li>
+          <li><a href="#"> Client Gateway</a></li>
+          <li><a href="#"> Ranking</a></li>
+          <li><a href="#"> Case Studies</a></li>
+          <li><a href="#"> Frequently Ask Questions</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3 col-sm-6 paddingtop-bottom">
+        <h6 class="heading7">LATEST POST</h6>
+        <div class="post">
+          <p>facebook crack the movie advertisment code:what it means for you <span>August 3,2015</span></p>
+          <p>facebook crack the movie advertisment code:what it means for you <span>August 3,2015</span></p>
+          <p>facebook crack the movie advertisment code:what it means for you <span>August 3,2015</span></p>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 paddingtop-bottom">
+        <div class="fb-page" data-href="https://www.facebook.com/facebook" data-tabs="timeline" data-height="300" data-small-header="false" style="margin-bottom:15px;" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+          <div class="fb-xfbml-parse-ignore">
+            <blockquote cite="https://www.facebook.com/facebook"><a href="https://www.facebook.com/facebook">Facebook</a></blockquote>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+<!--footer start from here-->
 
+<div class="copyright">
+  <div class="container">
+    <div class="col-md-6">
+      <p>© 2016 - All Rights with Webenlance</p>
+    </div>
+    <div class="col-md-6">
+      <ul class="bottom_ul">
+        <li><a href="#">webenlance.com</a></li>
+        <li><a href="#">About us</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Faq's</a></li>
+        <li><a href="#">Contact us</a></li>
+        <li><a href="#">Site Map</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
 	<script type="text/html" id="myTemplate">
 		<tr>
 			<td>{{turn}}</td>
