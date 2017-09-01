@@ -19,12 +19,11 @@ function onDataReady(data) {
 	console.log(data);
 	displayGreetings(data);
 	renderGames(data);
+	
 	$(".joinGame").click(joinGame);
 	$(".backGame").click(backToGame);
 	renderLeaderboard2(data);
-
 	$(".joinGame").hide();
-
 	$("#games").attr('class', 'col-sm-5');
 	$("#leaderBoard").attr('class', 'col-sm-4');
 
@@ -35,6 +34,8 @@ function onDataReady(data) {
 		$("#games").attr('class', 'col-sm-6');
 		$("#leaderBoard").attr('class', 'col-sm-6');
 	};
+	// keep refreshing to see new games
+	setTimeout(function () {$.getJSON("/api/games", onDataReady);}, 5000);
 }
 
 function newGame() {
@@ -59,39 +60,39 @@ function backToGame() {
 
 function renderGames(data) {
 	var output = "";
+
 	for (var i = 0; i < data.games.length; i++) {
 		var myDate = new Date(data.games[i].date);
-
-		output += "<tr>";
-
-		output += "<td>";
-		output += "<a" + addIdToLink(data.user, data.games[i]) + ">";
-		output += myDate.toDateString();
-		output += "</a>";
-		output += "</td>";
-
-		output += "<td>";
-		for (var j = 0; j < data.games[i].gamePlayers.length; ++j) {
-			output += data.games[i].gamePlayers[j].player.email + "<br>";
-		}
-		output += "</td>";
-
-		// checking who is in the game and if one of the users is make back button
-		if (data.games[i].gamePlayers.length == 1) {
-			if (data.games[i].gamePlayers[0].player.id != data.user.id) {
-				output += "<td><button type='button' class='btn btn-default joinGame' data-game-id=" + data.games[i].id + ">" + "Join" + "</button></td>";
-			} else {
-				output += "<td><button type='button' class='btn btn-default backGame' data-gamePlayer-id=" + data.games[i].gamePlayers[0].id + ">" + "Return" + "</button></td>";
+		// showing only the games that have not ended
+		if (data.games[i].isFinished == false) {
+			output += "<tr>";
+			output += "<td>";
+			output += "<a" + addIdToLink(data.user, data.games[i]) + ">";
+			output += myDate.toDateString();
+			output += "</a>";
+			output += "</td>";
+			output += "<td>";
+			for (var j = 0; j < data.games[i].gamePlayers.length; ++j) {
+				output += data.games[i].gamePlayers[j].player.email + "<br>";
 			}
-		} else {
-			for (var n = 0; n < data.games[i].gamePlayers.length; ++n) {
-				if (data.games[i].gamePlayers[n].player.id == data.user.id) {
-					output += "<td><button type='button' class='btn btn-default backGame' data-gamePlayer-id=" + data.games[i].gamePlayers[n].id + ">" + "Return" + "</button></td>";
+			output += "</td>";
+
+			// checking who is in the game and if one of the users is make back button
+			if (data.games[i].gamePlayers.length == 1) {
+				if (data.games[i].gamePlayers[0].player.id != data.user.id) {
+					output += "<td><button type='button' class='btn btn-default joinGame' data-game-id=" + data.games[i].id + ">" + "Join" + "</button></td>";
+				} else {
+					output += "<td><button type='button' class='btn btn-default backGame' data-gamePlayer-id=" + data.games[i].gamePlayers[0].id + ">" + "Return" + "</button></td>";
+				}
+			} else {
+				for (var n = 0; n < data.games[i].gamePlayers.length; ++n) {
+					if (data.games[i].gamePlayers[n].player.id == data.user.id) {
+						output += "<td><button type='button' class='btn btn-default backGame' data-gamePlayer-id=" + data.games[i].gamePlayers[n].id + ">" + "Return" + "</button></td>";
+					}
 				}
 			}
+			output += "</tr>";
 		}
-
-		output += "</tr>";
 	}
 	$("#games2").html(output);
 }
@@ -122,37 +123,34 @@ function renderLeaderboard(data) {
 	$("#leaderBoardResult").html(output);
 }
 
-
-
 function renderLeaderboard2(data) {
 	var arr = [];
-	
+
 	//creating an arr of objects
 	for (var key in data.leaderboard) {
 		var obj = data.leaderboard[key];
-		obj.email = key;		
+		obj.email = key;
 		arr.push(obj);
 	}
-	
+
 	//sorting arr of objects
 	arr.sort(function (a, b) {
 		return b.total - a.total;
 	});
-	
-	
+
+
 	//adding medals
 	arr[0].medal = "<img  src='http://vignette3.wikia.nocookie.net/overwatch/images/4/44/Competitive_Gold_Icon.png/revision/latest?cb=20161122023755'>";
 	arr[1].medal = "<img  src='https://d1u1mce87gyfbn.cloudfront.net/game/rank-icons/season-2/rank-2.png'>";
 	arr[2].medal = "<img  src='https://d1u1mce87gyfbn.cloudfront.net/game/rank-icons/season-2/rank-1.png'>";
-	
+
 	var output = "";
-	for (var i = 0; i< arr.length; ++i) {
-		console.log(arr[i]);
+	for (var i = 0; i < arr.length; ++i) {
 		output += "<tr>";
 		// adding empty td if theres no medal
 		// if there are no points there are no medals
 		if (arr[i].medal != undefined && arr[i].total != 0) {
-			output += "<td>" + arr[i].medal + "</td>";	
+			output += "<td>" + arr[i].medal + "</td>";
 		} else {
 			output += "<td>" + "</td>";
 		}

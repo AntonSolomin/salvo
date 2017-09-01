@@ -646,17 +646,11 @@ function renderPlayerInfo(data) {
 			youPlayer = data.game_players[i].player.email + " (You)";
 		} else {
 			otherPlayer += data.game_players[i].player.email + " (Enemy)";
-
-
 		}
 	}
-	
-	console.log("ddddd" + otherPlayer);
-	if (otherPlayer = "") {
-		otherPlayer = "Your opponent has not joined the game yet";
-		
+	if (otherPlayer == ""){
+		otherPlayer = "Your opponent hasn't joined the game yet";
 	}
-
 	$("#youPlayer").html(youPlayer);
 	$("#otherPlayer").html(otherPlayer);
 }

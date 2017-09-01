@@ -99,7 +99,6 @@ public class SalvoController {
         return finalDto;
     }
 
-
     @RequestMapping("/game_view/{gamePlayerId}")
     public ResponseEntity<Object> gameView(@PathVariable long gamePlayerId,
                                            Authentication authentication) {
@@ -303,13 +302,13 @@ public class SalvoController {
             if (getLeft(remainingShipLocations) == 0) {
                 final Score scoreWon = new Score(gamePlayer.getGame(), gamePlayer.getPlayer(), 1.0);
                 final Score scoreLost = new Score(gamePlayer.getGame(), gamePlayer.getEnemyGamePlayer().getPlayer(), 0);
+                gamePlayer.getGame().setFinished(true);
                 scoreRepository.save(scoreWon);
                 scoreRepository.save(scoreLost);
             }
         }
         return new ResponseEntity<Object>(response, HttpStatus.CREATED);
     }
-
 
     private boolean isPlacedShips(GamePlayer currentGamePlayer) {
         for (GamePlayer gp : currentGamePlayer.getGame().getGamePlayers()) {
@@ -369,7 +368,6 @@ public class SalvoController {
         return left;
     }
 
-    // recieve my salvos and enemy ships
     private List<String> getSunk(Set<Ship> enemyShips, Salvo sv, Map<Ship, Integer> remainingShipLocations) {
         // this will have the "sunk" ships
         final List<String> sunk = new ArrayList<>();
@@ -440,6 +438,7 @@ public class SalvoController {
         dto.put("date", game.getDate());
         final List<Object> gamePlayerDtos = game.getGamePlayers().stream().map(gp -> makeGamePlayerDto(gp)).collect(toList());
         dto.put("gamePlayers", gamePlayerDtos);
+        dto.put("isFinished", game.isFinished());
         return dto;
     }
 

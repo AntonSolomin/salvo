@@ -103,7 +103,6 @@ public class SalvoApplication {
     }
 }
 
-
 @Configuration
 class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 

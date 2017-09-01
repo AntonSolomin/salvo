@@ -12,6 +12,15 @@
 	padding-right: 20px;
 }
 
+#greetingsLogOutBox {
+	margin-top: none;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+}
+
+
+
 #top {
 	display: flex;
 	justify-content: center;
@@ -37,8 +46,6 @@
 }
 
 #greetings {
-	display: flex;
-	justify-content: center;
 	color: white;
 }
 
@@ -46,11 +53,8 @@
 	width: 150px;
 }
 
-#logOutBtn {
-	margin-top: none;
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
+#login {
+	margin-bottom: 100px;
 }
 
 #leaderBoard {
@@ -90,9 +94,6 @@ th {
 footer {
 	clear: both;
 	border-radius: 6px;
-}
-
-footer {
 	background-color: #0c1a1e;
 	min-height: 350px;
 	font-family: 'Open Sans', sans-serif;
@@ -175,6 +176,7 @@ footer {
 }
 
 .copyright {
+	border-radius: 6px;
 	min-height: 40px;
 	background-color: #000000;
 }
@@ -226,3 +228,10 @@ footer {
 	color: #FFF;
 	font-size: 12px;
 }
+
+
+.btn-primary {
+	margin-top: 5px;
+}
+
+

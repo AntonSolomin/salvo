@@ -15,6 +15,7 @@ public class Game {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long gameId;
     private Date gameCreationDate;
+    private boolean finished = false;
 
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
     private Set<GamePlayer> gamePlayers = new HashSet<>();
@@ -31,6 +32,14 @@ public class Game {
     }
 
     public Date getDate() { return this.gameCreationDate;}
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
 
     public void addGamePlayer(GamePlayer inputGamePlayer){
         gamePlayers.add(inputGamePlayer);
