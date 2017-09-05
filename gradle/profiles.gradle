@@ -1,0 +1,10 @@
+if (project.hasProperty('dev')) {
+    dependencies {
+        compile('com.h2database:h2')
+    }
+} else {
+    dependencies {
+        compile('com.h2database:h2')
+       //compile('mysql:mysql-connector-java')
+    }
+}

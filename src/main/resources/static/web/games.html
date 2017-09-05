@@ -11,120 +11,120 @@
 </head>
 
 <body class="container">
-		<div class="jumbotron" id="jumbo">
-			<div id="greetingsLogOutBox">
-				<p id="greetings"></p>
-				<button id="submitlogout" type="button" class="btn btn-primary">Log Out</button>
-			</div>
+	<div class="jumbotron" id="jumbo">
+		<div id="greetingsLogOutBox">
+			<p id="greetings"></p>
+			<button id="submitlogout" type="button" class="btn btn-primary">Log Out</button>
 		</div>
+	</div>
 
-		<div id="top">
-			<button id="newGame" type="button" class="btn btn-primary">New Game</button>
+	<div id="top">
+		<button id="newGame" type="button" class="btn btn-primary">New Game</button>
+	</div>
+
+	<form id="login" class="col-sm-3">
+		<div class="form-group">
+			<label for="email">Email address:</label>
+			<input type="email" class="form-control" id="email" required>
 		</div>
+		<div class="form-group">
+			<label for="pwd">Password:</label>
+			<input type="password" class="form-control" id="pwd" required>
+		</div>
+		<div id="checkbox" class="checkbox">
+			<label><input  type="checkbox"> Remember me</label>
+		</div>
+		<button id="submit" type="button" class="btn btn-primary btn-login-form">Submit</button>
+		<button id="newUser" type="button" class="btn btn-primary btn-login-form">New user</button>
+		<button id="register" type="button" class="btn btn-primary btn-login-form">Register and enter</button>
+		<button id="back" type="button" class="btn btn-primary btn-login-form">Go Back to Log In</button>
+	</form>
 
-		<form id="login" class="col-sm-3">
-			<div class="form-group">
-				<label for="email">Email address:</label>
-				<input type="email" class="form-control" id="email" required>
-			</div>
-			<div class="form-group">
-				<label for="pwd">Password:</label>
-				<input type="password" class="form-control" id="pwd" required>
-			</div>
-			<div id="checkbox" class="checkbox">
-				<label><input  type="checkbox"> Remember me</label>
-			</div>
-			<button id="submit" type="button" class="btn btn-primary btn-login-form">Submit</button>
-			<button id="newUser" type="button" class="btn btn-primary btn-login-form">New user</button>
-			<button id="register" type="button" class="btn btn-primary btn-login-form">Register and enter</button>
-			<button id="back" type="button" class="btn btn-primary btn-login-form">Go Back to Log In</button>
-		</form>
+	<table id="games" class="col-sm-5">
+		<thead>
+			<tr>
+				<td>Game</td>
+				<td>Players</td>
+				<td></td>
+			</tr>
+		</thead>
+		<tbody id="games2"></tbody>
+	</table>
 
-		<table id="games" class="col-sm-5">
-			<thead>
-				<tr>
-					<td>Game</td>
-					<td>Players</td>
-					<td></td>
-				</tr>
-			</thead>
-			<tbody id="games2"></tbody>
-		</table>
+	<table id="leaderBoard" class="col-sm-4">
+		<thead>
+			<th></th>
+			<th>Player</th>
+			<th>Total Points</th>
+			<th>Won</th>
+			<th>Lost</th>
+			<th>Tied</th>
+		</thead>
+		<tbody id="leaderBoardResult"></tbody>
+	</table>
 
-		<table id="leaderBoard" class="col-sm-4">
-			<thead>
-				<th></th>
-				<th>Player</th>
-				<th>Total Points</th>
-				<th>Won</th>
-				<th>Lost</th>
-				<th>Tied</th>
-			</thead>
-			<tbody id="leaderBoardResult"></tbody>
-		</table>
+	<link href="https://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+	<!--footer start from here-->
+	<footer>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-4 col-sm-6 footerleft ">
+					<div class="logofooter"> Logo</div>
+					<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi </p>
+					<p><i class="fa fa-map-pin"></i> eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat</p>
+					<p><i class="fa fa-phone"></i> dolores eos qui ratione voluptatem sequi nesciunt. Neque </p>
+					<p><i class="fa fa-envelope"></i> E-mail : ledorub@gmail.com</p>
 
-		<link href="https://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.css" rel="stylesheet">
-		<!--footer start from here-->
-		<footer>
-			<div class="container">
-				<div class="row">
-					<div class="col-md-4 col-sm-6 footerleft ">
-						<div class="logofooter"> Logo</div>
-						<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi </p>
-						<p><i class="fa fa-map-pin"></i> eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat</p>
-						<p><i class="fa fa-phone"></i> dolores eos qui ratione voluptatem sequi nesciunt. Neque </p>
-						<p><i class="fa fa-envelope"></i> E-mail : ledorub@gmail.com</p>
-
-					</div>
-					<div class="col-md-2 col-sm-6 paddingtop-bottom">
-						<h6 class="heading7">GENERAL LINKS</h6>
-						<ul class="footer-ul">
-							<li><a href="#"> Career</a></li>
-							<li><a href="#"> Privacy Policy</a></li>
-							<li><a href="#"> Terms and Conditions</a></li>
-							<li><a href="#"> Client Gateway</a></li>
-							<li><a href="#"> Ranking</a></li>
-							<li><a href="#"> Case Studies</a></li>
-							<li><a href="#"> Frequently Ask Questions</a></li>
-						</ul>
-					</div>
-					<div class="col-md-3 col-sm-6 paddingtop-bottom">
-						<h6 class="heading7">LATEST POST</h6>
-						<div class="post">
-							<p>facebook crack the movie advertisment code:what it means for you <span>August 3,2015</span></p>
-							<p>facebook crack the movie advertisment code:what it means for you <span>August 3,2015</span></p>
-							<p>facebook crack the movie advertisment code:what it means for you <span>August 3,2015</span></p>
-						</div>
-					</div>
-					<div class="col-md-3 col-sm-6 paddingtop-bottom">
-						<div class="fb-page" data-href="https://www.facebook.com/facebook" data-tabs="timeline" data-height="300" data-small-header="false" style="margin-bottom:15px;" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
-							<div class="fb-xfbml-parse-ignore">
-								<blockquote cite="https://www.facebook.com/facebook"><a href="https://www.facebook.com/facebook">Facebook</a></blockquote>
-							</div>
-						</div>
-					</div>
 				</div>
-			</div>
-		</footer>
-		<!--footer start from here-->
-
-		<div class="copyright">
-			<div class="container">
-				<div class="col-md-6">
-					<p>© 2016 eu fugiat nulla pariatur. Excepteur sint occaecat </p>
-				</div>
-				<div class="col-md-6">
-					<ul class="bottom_ul">
-						<li><a href="#">Excepteur sint </a></li>
-						<li><a href="#">About us</a></li>
-						<li><a href="#">Blog</a></li>
-						<li><a href="#">Faq's</a></li>
-						<li><a href="#">Contact us</a></li>
-						<li><a href="#">Site Map</a></li>
+				<div class="col-md-2 col-sm-6 paddingtop-bottom">
+					<h6 class="heading7">GENERAL LINKS</h6>
+					<ul class="footer-ul">
+						<li><a href="#"> Career</a></li>
+						<li><a href="#"> Privacy Policy</a></li>
+						<li><a href="#"> Terms and Conditions</a></li>
+						<li><a href="#"> Client Gateway</a></li>
+						<li><a href="#"> Ranking</a></li>
+						<li><a href="#"> Case Studies</a></li>
+						<li><a href="#"> Frequently Ask Questions</a></li>
 					</ul>
 				</div>
+				<div class="col-md-3 col-sm-6 paddingtop-bottom">
+					<h6 class="heading7">LATEST POST</h6>
+					<div class="post">
+						<p>facebook crack the movie advertisment code:what it means for you <span>August 3,2015</span></p>
+						<p>facebook crack the movie advertisment code:what it means for you <span>August 3,2015</span></p>
+						<p>facebook crack the movie advertisment code:what it means for you <span>August 3,2015</span></p>
+					</div>
+				</div>
+				<div class="col-md-3 col-sm-6 paddingtop-bottom">
+					<div class="fb-page" data-href="https://www.facebook.com/facebook" data-tabs="timeline" data-height="300" data-small-header="false" style="margin-bottom:15px;" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+						<div class="fb-xfbml-parse-ignore">
+							<blockquote cite="https://www.facebook.com/facebook"><a href="https://www.facebook.com/facebook">Facebook</a></blockquote>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
+	</footer>
+	<!--footer start from here-->
+
+	<div class="copyright">
+		<div class="container">
+			<div class="col-md-6">
+				<p>© 2016 eu fugiat nulla pariatur. Excepteur sint occaecat </p>
+			</div>
+			<div class="col-md-6">
+				<ul class="bottom_ul">
+					<li><a href="#">Excepteur sint </a></li>
+					<li><a href="#">About us</a></li>
+					<li><a href="#">Blog</a></li>
+					<li><a href="#">Faq's</a></li>
+					<li><a href="#">Contact us</a></li>
+					<li><a href="#">Site Map</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
 
 	<script src="scripts/games.js" type="text/javascript"></script>
 </body>

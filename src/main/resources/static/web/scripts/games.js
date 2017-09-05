@@ -22,7 +22,7 @@ function onDataReady(data) {
 	
 	$(".joinGame").click(joinGame);
 	$(".backGame").click(backToGame);
-	renderLeaderboard2(data);
+	renderLeaderboard(data);
 	$(".joinGame").hide();
 	$("#games").attr('class', 'col-sm-5');
 	$("#leaderBoard").attr('class', 'col-sm-4');
@@ -110,20 +110,6 @@ function addIdToLink(user, game) {
 }
 
 function renderLeaderboard(data) {
-	var output = "";
-	for (var key in data.leaderboard) {
-		output += "<tr>";
-		output += "<td>" + key + "</td>";
-		output += "<td>" + data.leaderboard[key].total + "</td>";
-		output += "<td>" + data.leaderboard[key].won + "</td>";
-		output += "<td>" + data.leaderboard[key].lost + "</td>";
-		output += "<td>" + data.leaderboard[key].tied + "</td>";
-		output += "</tr>";
-	}
-	$("#leaderBoardResult").html(output);
-}
-
-function renderLeaderboard2(data) {
 	var arr = [];
 
 	//creating an arr of objects
@@ -145,7 +131,9 @@ function renderLeaderboard2(data) {
 	arr[2].medal = "<img  src='https://d1u1mce87gyfbn.cloudfront.net/game/rank-icons/season-2/rank-1.png'>";
 
 	var output = "";
-	for (var i = 0; i < arr.length; ++i) {
+	
+	// instead of ptinting arr.length we'll only print 5
+	for (var i = 0; i < 5; ++i) {
 		output += "<tr>";
 		// adding empty td if theres no medal
 		// if there are no points there are no medals
