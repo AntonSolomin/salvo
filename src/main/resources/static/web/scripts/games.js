@@ -126,7 +126,7 @@ function renderLeaderboard(data) {
 
 
 	//adding medals
-	arr[0].medal = "<img  src='http://vignette3.wikia.nocookie.net/overwatch/images/4/44/Competitive_Gold_Icon.png/revision/latest?cb=20161122023755'>";
+	arr[0].medal = "<img  src='https://vignette3.wikia.nocookie.net/overwatch/images/4/44/Competitive_Gold_Icon.png/revision/latest?cb=20161122023755'>";
 	arr[1].medal = "<img  src='https://d1u1mce87gyfbn.cloudfront.net/game/rank-icons/season-2/rank-2.png'>";
 	arr[2].medal = "<img  src='https://d1u1mce87gyfbn.cloudfront.net/game/rank-icons/season-2/rank-1.png'>";
 
@@ -227,7 +227,8 @@ function registerUser() {
 		}).done(function () {
 			$.getJSON("/api/games", onDataReady);
 		}).fail(function () {});
-	}).fail(function () {
+	}).fail(function (arr) {
+		console.log(arr);
 		console.log("User already exists");
 	});
 }

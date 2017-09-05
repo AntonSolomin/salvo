@@ -140,12 +140,11 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/api/games").permitAll()
+                .antMatchers("/api/players").permitAll()
                 .antMatchers("/web/games.html").permitAll()
                 .antMatchers("/web/scripts/games.js").permitAll()
                 .antMatchers("/web/games.css").permitAll()
-                .anyRequest().fullyAuthenticated()
-                .and()
-                .formLogin();
+                .anyRequest().fullyAuthenticated();
 
         http.formLogin()
                 .usernameParameter("userName")

@@ -35,4 +35,4 @@ dependencies {
 }
 
 //this will load the right dependency depending on the profile used
-apply from: rootProject.file('gradle/profiles.gradle');
+apply from: rootProject.file('gradle/profiles.gradle')
