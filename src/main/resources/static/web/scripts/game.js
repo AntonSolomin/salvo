@@ -655,6 +655,25 @@ function renderPlayerInfo(data) {
 	$("#otherPlayer").html(otherPlayer);
 }
 
+
+function isHit(data, toCheck){
+	for (var i = 0; i<data.history.length; ++i) {
+		if (data.history[i].gpid == queryObj.gp) {
+			for (var w = 0; w< data.history[i].action.length; ++w) {
+				for (var turn in data.history[i].action[w]) {
+					var hits = data.history[i].action[w].hit;
+					for (var k = 0; k<hits.length; ++k) {
+						if (toCheck == hits[k]) {
+							return true;	
+						}
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
 function renderSalvos(data, tableSelector) {
 	for (var key in data.salvos) {
 		//my shots on the enemy map
@@ -668,7 +687,13 @@ function renderSalvos(data, tableSelector) {
 					for (var j = 0; j < $myMap.length; ++j) {
 						var $field = $($myMap[j]);
 						if (mySalvoTurn[i] == $field.attr("data-location2")) {
-							$field.html("<p class='hit'>" + turnKey + "</p>");
+							console.log();
+							var toCheck = $field.attr("data-location2")
+							if (isHit(data, toCheck)) {
+								$field.html("<p class='hit'>" + turnKey + "</p>");	
+							} else {
+									$field.html("<p class='notHit'>" + turnKey + "</p>");			 
+							}
 						}
 					}
 				}
@@ -686,6 +711,7 @@ function renderSalvos(data, tableSelector) {
 						var $enemyField = $($enemyMap[j]);
 						if (enemySalvoTurn[i] == $enemyField.attr("data-location1")) {
 							$enemyField.html("<p class='hit'>" + enemyTurnKey + "</p>");
+							console.log('hello');
 						}
 					}
 				}
