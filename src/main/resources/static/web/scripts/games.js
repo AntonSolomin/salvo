@@ -46,7 +46,7 @@ function newGame() {
 
 function joinGame() {
 	$.post("/api/games/" + $(this).attr("data-game-id") + "/players").done(function (data) {
-		location.assign("game.html?gp=" + data.gpid);
+		location.assign("/web/game.html?gp=" + data.gpid);
 	}).fail(function (data) {
 		//parsing response text and alerting if something is wrong
 		var obj = JSON.parse(data.responseText);
@@ -55,7 +55,7 @@ function joinGame() {
 }
 
 function backToGame() {
-	window.location = 'game.html?gp=' + $(this).attr("data-gamePlayer-id");
+	window.location = '/web/game.html?gp=' + $(this).attr("data-gamePlayer-id");
 }
 
 function renderGames(data) {
@@ -102,7 +102,7 @@ function addIdToLink(user, game) {
 	if (user != "guest user") {
 		for (var j = 0; j < game.gamePlayers.length; j++) {
 			if (game.gamePlayers[j].player.id == user.id) {
-				link = " href='game.html?gp=" + game.gamePlayers[j].id + "' ";
+				link = " href='/web/game.html?gp=" + game.gamePlayers[j].id + "' ";
 			}
 		}
 	}
