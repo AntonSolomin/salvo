@@ -669,6 +669,17 @@ function isHit(data, toCheck){
 					}
 				}
 			}
+		} else {
+			for (var q = 0; q< data.history[i].action.length; ++q) {
+				for (var turn in data.history[i].action[q]) {
+					var hits2 = data.history[i].action[q].hit;
+					for (var r = 0; r<hits2.length; ++r) {
+						if (toCheck == hits2[r]) {
+							return true;	
+						}
+					}
+				}
+			}
 		}
 	}
 	return false;
@@ -683,12 +694,11 @@ function renderSalvos(data, tableSelector) {
 			for (var turnKey in mySalvos) {
 				// Arrays with shots
 				var mySalvoTurn = mySalvos[turnKey];
-				for (var i = 0; i < mySalvoTurn.length; ++i) {
-					for (var j = 0; j < $myMap.length; ++j) {
+				for (let i = 0; i < mySalvoTurn.length; ++i) {
+					for (let j = 0; j < $myMap.length; ++j) {
 						var $field = $($myMap[j]);
 						if (mySalvoTurn[i] == $field.attr("data-location2")) {
-							console.log();
-							var toCheck = $field.attr("data-location2")
+							var toCheck = $field.attr("data-location2");
 							if (isHit(data, toCheck)) {
 								$field.html("<p class='hit'>" + turnKey + "</p>");	
 							} else {
@@ -706,12 +716,16 @@ function renderSalvos(data, tableSelector) {
 			for (var enemyTurnKey in enemySalvos) {
 				// Arrays with shots
 				var enemySalvoTurn = enemySalvos[enemyTurnKey];
-				for (var i = 0; i < enemySalvoTurn.length; ++i) {
-					for (var j = 0; j < $enemyMap.length; ++j) {
+				for (let i = 0; i < enemySalvoTurn.length; ++i) {
+					for (let j = 0; j < $enemyMap.length; ++j) {
 						var $enemyField = $($enemyMap[j]);
 						if (enemySalvoTurn[i] == $enemyField.attr("data-location1")) {
-							$enemyField.html("<p class='hit'>" + enemyTurnKey + "</p>");
-							console.log('hello');
+							var toCheck2 = $enemyField.attr("data-location1");
+								if (isHit(data, toCheck2)) {
+								$enemyField.html("<p class='hit'>" + enemyTurnKey + "</p>");	
+							} else {
+								$enemyField.html("<p class='notHit'>" + enemyTurnKey + "</p>");			 
+							}
 						}
 					}
 				}
