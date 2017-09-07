@@ -42,7 +42,10 @@ function onDataReady(data) {
 
 	renderTables(1);
 	renderTables(2);
-	addBackgoundToMaps();
+	var myMap = "#yourShipsMap";
+	var otherMap = "#salvosMap";
+	addBackgoundToMaps(myMap);
+	addBackgoundToMaps(otherMap);
 	
 	renderShips(data, "#yourShipsMap");
 	renderSalvos(data, "#salvosMap");
@@ -62,9 +65,10 @@ function onDataReady(data) {
 	}
 
 	$("td[data-length]").click(choseShip);
-	$("td[data-location1]").click(placeShipsOnTheMap);
 	$("td[data-location1]").mouseover(hoverHighlight);
 	$("td[data-location1]").mouseleave(hoverUnhighlight);
+	$("td[data-location1]").click(placeShipsOnTheMap);
+	
 
 	// turns logic
 	turns(data);
@@ -77,29 +81,37 @@ function onDataReady(data) {
 	}
 }
 
-function addBackgoundToMaps() {
-	var $locationTop = $("#yourShipsMap").find("th");
-	var $locationCenter = $("#yourShipsMap").find("tr");
+function addBackgoundToMaps(map) {
+	//var $locationTop = $("#yourShipsMap").find("th");
+	var $locationCenter = $(map).find("tr");
+	var $topTds = $($locationCenter[1]).find("td");
 	
-	console.log(tds);
-	
-	$($locationTop[0]).addClass("topLeft");
-	for (var i = 1; i < $locationTop.length -1; ++i) {
-		$($locationTop[i]).addClass("topCenter");
+	// drawing the first row after the alphabet
+	$($topTds[1]).addClass("topLeft");
+	for (var i = 2; i < $topTds.length -1; ++i) {
+		$($topTds[i]).addClass("topCenter");
 	}
-	$($locationTop[$locationTop.length-1]).addClass("topRight");
+	$($topTds[$topTds.length-1]).addClass("topRight");
 	
 	
-	
-	for (var c = 1; c < $locationCenter.length -1; ++c) {
-		var tds = $($locationCenter[1]).find("td");
-		$($locationCenter[0]).addClass("middleLeft");
-		for (var e = 0; e < tds.length; ++e ) {
-			$(tds[e]).addClass("middleCenter")
+	//drawing central rows
+	for (var c = 2; c < $locationCenter.length -1; ++c) {
+		var $tds = $($locationCenter[c]).find("td");
+		$($tds[1]).addClass("middleLeft");
+		for (var e = 2; e < $tds.length; ++e ) {
+			$($tds[e]).addClass("middleCenter")
 		}
+		$($tds[$tds.length - 1]).addClass("middleRight");
 	}
-	$($locationTop[$locationTop.length-1]).addClass("topRight");
 	
+	
+	//drawing bottom row
+	var $lastRowTds = $($locationCenter[$locationCenter.length-1]).find("td");
+	$($lastRowTds[1]).addClass("bottomLeft");
+	for (var w = 2; w < $lastRowTds.length + 1; ++w) {
+		$($lastRowTds[w]).addClass("bottomCenter");
+	}
+	$($lastRowTds[$lastRowTds.length-1]).addClass("bottomRight");
 	
 }
 
@@ -112,7 +124,6 @@ function messages() {
 		$("#message").html("Waiting for the enemy to place ships.");
 	}
 }
-
 
 function turns(data) {
 	$("#submitShots").hide();
@@ -247,25 +258,33 @@ function shootHighlight() {
 	}
 	// remove coloring classes and clear arr on a new hover
 	for (var i = 0; i < arr.length; i++) {
-		arr[i].removeClass("highlight");
+		arr[i].removeClass("toBomb");
 		arr[i].removeClass("overlap");
 	}
 	//clearing the arr
 	arr = [];
 	// otherwise highlighting the current 
 	var current = $(this).attr("data-location2");
+	
+	
 
 	if (isPreviouslyShot(current)) {
 		console.log("Has been shot before");
 		return false;
 	}
 
-	$("td[data-location2='" + current + "']").addClass("highlight");
+	$("td[data-location2='" + current + "']").addClass("toBomb");
+	
+	if ($("td[data-location2='" + current + "']").hasClass("bombed")) {
+			$("td[data-location2='" + current + "']").removeClass("toBomb");
+			$("td[data-location2='" + current + "']").addClass("bombed");
+	}
+	
 	arr.push($("td[data-location2='" + current + "']"));
 }
 
 function unhighlight() {
-	$(this).removeClass("highlight");
+	$(this).removeClass("toBomb");
 }
 
 function shootAdd() {
@@ -279,8 +298,8 @@ function shootAdd() {
 	}
 
 	//removing from the salvo arr and highlight
-	if ($(this).hasClass("shot")) {
-		$("td[data-location2='" + current + "']").removeClass("shot");
+	if ($(this).hasClass("bombed")) {
+		$("td[data-location2='" + current + "']").removeClass("bombed");
 		for (var i = 0; i < salvo.length; ++i) {
 			if (salvo[i] == current) {
 				salvo.splice(i, 1);
@@ -314,7 +333,9 @@ function shootAdd() {
 		console.log("Again, it has been shot");
 		return false;
 	}
-	$("td[data-location2='" + current + "']").addClass("shot");
+	
+	$("td[data-location2='" + current + "']").removeClass("toBomb");
+	$("td[data-location2='" + current + "']").addClass("bombed");
 	salvo.push(current);
 }
 
@@ -493,6 +514,35 @@ function isOverEdgeVertical(toCheck) {
 	return false;
 }
 
+function isHit(data, toCheck){
+	for (var i = 0; i<data.history.length; ++i) {
+		if (data.history[i].gpid == queryObj.gp) {
+			for (var w = 0; w< data.history[i].action.length; ++w) {
+				for (var turn in data.history[i].action[w]) {
+					var hits = data.history[i].action[w].hit;
+					for (var k = 0; k<hits.length; ++k) {
+						if (toCheck == hits[k]) {
+							return true;	
+						}
+					}
+				}
+			}
+		} else {
+			for (var q = 0; q< data.history[i].action.length; ++q) {
+				for (var turn in data.history[i].action[q]) {
+					var hits2 = data.history[i].action[q].hit;
+					for (var r = 0; r<hits2.length; ++r) {
+						if (toCheck == hits2[r]) {
+							return true;	
+						}
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
 function choseShip() {
 	shipLength = $(this).attr("data-length");
 	shipClass = $(this).parent().attr("id");
@@ -597,12 +647,7 @@ function addtoShipsObj() {
 }
 
 function paintShipOnTheMap(location) {
-	if (!isOverlap(location)) {
-		$("td[data-location1='" + location + "']").addClass("placed");
-	}
-	if (!isOverEdgeVertical(location)) {
-		$("td[data-location1='" + location + "']").addClass("placed");
-	}
+	$("td[data-location1='" + location + "']").addClass("placed");
 }
 
 function sendShips() {
@@ -626,23 +671,48 @@ function sendShips() {
 }
 
 function renderTables(str) {
+	var size = 10;
 	var alphabet = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 	var output = "";
+	
+	
 	//top row ABC..
 	output += "<tr>";
-	for (var i = 0; i < alphabet.length && i < 11; i++) {
+	output += "<th></th>"
+	for (var i = 0; i < size +1 ; i++) {
 		output += "<th>" + alphabet[i] + "</th>";
 	}
+	output += "<th></th>"
 	output += "</tr>";
+	
+	output += "<tr>";
+	output += "<td></td>"
+	for (var t = 0; t < size +1 ; t++) {
+		output += "<td></td>";
+	}
+	output += "<td></td>"
+	output += "</tr>";
+	
+	
 	var counter1 = 1;
-	for (var j = 0; j < 10; ++j) {
+	for (var j = 0; j < size; ++j) {
 		output += "<tr>" + "<td data-location" + str + "=side>" + counter1 + "</td>";
-		for (var c = 0; c < alphabet.length && c < 10; c++) {
+		output +=	"<td></td>";
+		for (var c = 0; c < alphabet.length && c < size; c++) {
 			output += '<td class="fields" data-location' + str + '="' + alphabet[c + 1] + counter1 + '">' + " " + "</td>";
 		}
+		output += "<td></td>"
 		output += "</tr>";
 		counter1++;
 	}
+	
+	output += "<tr>"
+	for (var m = 0; m<size+3; ++m) {
+		output += "<td></td>"
+	}
+	output += "</tr>"
+	
+	
 	if (str == 1) {
 		$("#yourShipsMap").html(output);
 	} else {
@@ -657,7 +727,7 @@ function renderShips(data, tableSelector) {
 			for (var j = 0; j < $map.length; ++j) {
 				var $field = $($map[j]);
 				if (data.ships[i].locations[k] == $field.attr("data-location1")) {
-					$field.css("background-color", "green");
+					$($field).addClass("placed");
 				}
 			}
 		}
@@ -683,36 +753,6 @@ function renderPlayerInfo(data) {
 	$("#otherPlayer").html(otherPlayer);
 }
 
-
-function isHit(data, toCheck){
-	for (var i = 0; i<data.history.length; ++i) {
-		if (data.history[i].gpid == queryObj.gp) {
-			for (var w = 0; w< data.history[i].action.length; ++w) {
-				for (var turn in data.history[i].action[w]) {
-					var hits = data.history[i].action[w].hit;
-					for (var k = 0; k<hits.length; ++k) {
-						if (toCheck == hits[k]) {
-							return true;	
-						}
-					}
-				}
-			}
-		} else {
-			for (var q = 0; q< data.history[i].action.length; ++q) {
-				for (var turn in data.history[i].action[q]) {
-					var hits2 = data.history[i].action[q].hit;
-					for (var r = 0; r<hits2.length; ++r) {
-						if (toCheck == hits2[r]) {
-							return true;	
-						}
-					}
-				}
-			}
-		}
-	}
-	return false;
-}
-
 function renderSalvos(data, tableSelector) {
 	for (var key in data.salvos) {
 		//my shots on the enemy map
@@ -728,8 +768,9 @@ function renderSalvos(data, tableSelector) {
 						if (mySalvoTurn[i] == $field.attr("data-location2")) {
 							var toCheck = $field.attr("data-location2");
 							if (isHit(data, toCheck)) {
-								$field.html("<p class='hit'>" + turnKey + "</p>");	
+								$field.addClass("bombedDuck");	
 							} else {
+									// to add a feature to turn turns in hits onn and off
 									$field.html("<p class='notHit'>" + turnKey + "</p>");			 
 							}
 						}
@@ -750,8 +791,9 @@ function renderSalvos(data, tableSelector) {
 						if (enemySalvoTurn[i] == $enemyField.attr("data-location1")) {
 							var toCheck2 = $enemyField.attr("data-location1");
 								if (isHit(data, toCheck2)) {
-								$enemyField.html("<p class='hit'>" + enemyTurnKey + "</p>");	
+								$($enemyField).addClass("bombedDuck");	
 							} else {
+								// to add a feature to turn turns in hits onn and off
 								$enemyField.html("<p class='notHit'>" + enemyTurnKey + "</p>");			 
 							}
 						}

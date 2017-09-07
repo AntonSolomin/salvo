@@ -2,6 +2,8 @@
 	--borderBottom: 30px;
 }
 
+
+
 .jumbotron {
 	background-image: url(http://i2.cdn.cnn.com/cnnnext/dam/assets/170126112222-russian-aircraft-carrier-admiral-kuznetsov-01-25-full-169.jpg);
 	background-position: center;
@@ -117,27 +119,9 @@ tr th {
 	margin-right: 20px;
 }
 
-.highlight {
-	background-color: gray;
-}
 
-.placed {
-	background-color: green;
-}
 
-.hide{
-	visibility: hidden;
-}
-
-.overlap {
-	background-color: red;
-}
-
-.shot {
-	background-color: yellow;
-}
-
-.hit {
+/*.hit {
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -148,7 +132,7 @@ tr th {
 	border-radius: 20px;
 	border: 1px solid black;
 	background-color: red;
-}
+}*/
 
 .notHit {
 	position: absolute;
@@ -352,16 +336,49 @@ footer {
 	background-image: url(background/cc.png);
 }
 .middleRight {
-	background-image: image()
+	background-image: url(background/cr.png);
 }
 
 
 .bottomLeft {
-	background-image: image()
+	background-image: url(background/bl.png);
 }
 .bottomCenter {
-	background-image: image()
+	background-image: url(background/bc.png);
 }
 .bottomRight {
-	background-image: image()
+	background-image: url(background/br.png);
 }
+
+.highlight,
+.placed{
+	background-image: url(background/Golden_Cascade_Duck.png);
+	background-color: #8dd8ff;
+	background-size: cover;
+}
+
+.bombed {
+	background-image: url(background/App-core-bomb-icon.png);
+	background-color: #8dd8ff;
+	background-size: cover;
+}
+
+.bombedDuck {
+	background-image: url(background/Golden_Cascade_Duck.png);
+	background-color: #e81616;
+	background-size: cover;
+}
+
+.toBomb {
+	background-image: url(background/34-128.png);
+	background-color: #8dd8ff;
+	background-size: cover;
+}
+
+.overlap {
+	background-image: url(background/red.png);
+}
+
+
+
+
