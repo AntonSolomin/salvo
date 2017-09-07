@@ -42,6 +42,8 @@ function onDataReady(data) {
 
 	renderTables(1);
 	renderTables(2);
+	addBackgoundToMaps();
+	
 	renderShips(data, "#yourShipsMap");
 	renderSalvos(data, "#salvosMap");
 	renderSalvos(data, "#yourShipsMap");
@@ -73,6 +75,32 @@ function onDataReady(data) {
 		$("td[data-location2]").mouseleave(unhighlight);
 		$("td[data-location2]").click(shootAdd);
 	}
+}
+
+function addBackgoundToMaps() {
+	var $locationTop = $("#yourShipsMap").find("th");
+	var $locationCenter = $("#yourShipsMap").find("tr");
+	
+	console.log(tds);
+	
+	$($locationTop[0]).addClass("topLeft");
+	for (var i = 1; i < $locationTop.length -1; ++i) {
+		$($locationTop[i]).addClass("topCenter");
+	}
+	$($locationTop[$locationTop.length-1]).addClass("topRight");
+	
+	
+	
+	for (var c = 1; c < $locationCenter.length -1; ++c) {
+		var tds = $($locationCenter[1]).find("td");
+		$($locationCenter[0]).addClass("middleLeft");
+		for (var e = 0; e < tds.length; ++e ) {
+			$(tds[e]).addClass("middleCenter")
+		}
+	}
+	$($locationTop[$locationTop.length-1]).addClass("topRight");
+	
+	
 }
 
 function messages() {

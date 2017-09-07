@@ -332,3 +332,36 @@ footer {
 	color: #FFF;
 	font-size: 12px;
 }
+
+
+.topLeft {
+	background-image: url("background/tl.png");
+}
+.topCenter {
+	background-image: url(background/tc.png);
+}
+.topRight {
+	background-image: url(background/tr.png);
+}
+
+
+.middleLeft {
+	background-image: url(background/cl.png);
+}
+.middleCenter {
+	background-image: url(background/cc.png);
+}
+.middleRight {
+	background-image: image()
+}
+
+
+.bottomLeft {
+	background-image: image()
+}
+.bottomCenter {
+	background-image: image()
+}
+.bottomRight {
+	background-image: image()
+}

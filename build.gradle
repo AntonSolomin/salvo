@@ -30,10 +30,9 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-data-rest')
 	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('mysql:mysql-connector-java')
+	//compile('mysql:mysql-connector-java')
+	compile 'com.h2database:h2'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile("org.springframework.boot:spring-boot-starter-security")
 }
 
-//this will load the right dependency depending on the profile used
-//apply from: rootProject.file('gradle/profiles.gradle')
