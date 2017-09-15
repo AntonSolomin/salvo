@@ -1,10 +1,12 @@
 package project.salvo.game;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -37,6 +39,11 @@ public class SalvoController {
     @Autowired
     private ScoreRepository scoreRepository;
 
+    //making our db cache available
+    //This would be the similar. only the controller would have access to it
+    //private DBCache dbCache = new DBCache();
+    @Autowired
+    private DBCache dbCache;
 
     @RequestMapping(path = "/players", method = RequestMethod.POST)
     public ResponseEntity<String> createPlayer(String firstName,
@@ -68,6 +75,7 @@ public class SalvoController {
             final GamePlayer firstGamePlayer = new GamePlayer(player, newGame);
             gamePlayerRepository.save(firstGamePlayer);
             response.put("gpid", firstGamePlayer.getId());
+            dbCache.apiGamesResponseChanged = true;
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
     }
@@ -75,36 +83,36 @@ public class SalvoController {
     @RequestMapping(path = "/games", method = RequestMethod.GET)
     public Map<String, Object> getGames(Authentication authentication) {
 
-        final List<Object> gamesDto = gameRepository
-                .findAll()
-                .stream()
-                .map(g -> makeGameDTO(g))
-                .collect(toList());
-
         final Map<String, Object> finalDto = new LinkedHashMap<>();
-        if (isGuest(authentication)) {
-            finalDto.put("user", "unidentified user");
-            finalDto.put("games", gamesDto);
-            finalDto.put("leaderboard", makeScoresDto());
-            return finalDto;
-        }
 
         final Player user = currentAuthenticatedUser(authentication);
         if (user != null) {
             finalDto.put("user", makePlayerDto(user));
+        } else  {
+            finalDto.put("user", "unidentified user");
         }
 
-        finalDto.put("games", gamesDto);
-        finalDto.put("leaderboard", makeScoresDto());
+        if (dbCache.apiGamesResponseChanged) {
+            dbCache.apiGamesDto = gameRepository
+                    .findAll()
+                    .stream()
+                    .map(g -> makeGameDTO(g))
+                    .collect(toList());
+            dbCache.apiLeaderBoardDto = makeScoresDto();
+            dbCache.apiGamesResponseChanged = false;
+        }
 
+        finalDto.put("games", dbCache.apiGamesDto);
+        finalDto.put("leaderboard", dbCache.apiLeaderBoardDto);
         return finalDto;
     }
 
+    @Transactional
     @RequestMapping("/game_view/{gamePlayerId}")
     public ResponseEntity<Object> gameView(@PathVariable long gamePlayerId,
                                            Authentication authentication) {
-
         final Map<String, Object> toReturn = new LinkedHashMap<>();
+
         final List<Object> gamePlayers = new ArrayList<>();
         final List<Object> locations = new ArrayList<>();
         final List<Object> history = new ArrayList<>();
@@ -197,6 +205,7 @@ public class SalvoController {
         //including new game player's ID
         final Long gpid = newGamePlayer.getId();
         response.put("gpid", gpid);
+        dbCache.apiGamesResponseChanged = true;
         return new ResponseEntity<Object>(response, HttpStatus.CREATED);
     }
 
@@ -223,7 +232,7 @@ public class SalvoController {
         }
 
         //if the user owns a game player to which he is trying to add ships. if yes return Unauthorized
-        if (gamePlayer.getPlayer() != user) {
+        if (gamePlayer.getPlayer().getUserId() != user.getUserId()) {
             response.put("error", "the user is attempting to add ships for other players");
             return new ResponseEntity<Object>(response, HttpStatus.UNAUTHORIZED);
         }
@@ -306,6 +315,7 @@ public class SalvoController {
                 gamePlayer.getGame().setFinished(true);
                 scoreRepository.save(scoreWon);
                 scoreRepository.save(scoreLost);
+                dbCache.apiGamesResponseChanged = true;
             }
         }
         return new ResponseEntity<Object>(response, HttpStatus.CREATED);
@@ -500,13 +510,23 @@ public class SalvoController {
     }
 
     private Player currentAuthenticatedUser(Authentication authentication) {
-        return playerRepository.findByUserName(authentication.getName());
+        if (isGuest(authentication)) {
+            return null;
+        }
+
+        String key = authentication.getName();
+        if (!dbCache.apiPlayer.containsKey(key)) {
+            dbCache.apiPlayer.put(key, playerRepository.findByUserName(key));
+        }
+
+        return dbCache.apiPlayer.get(key);
     }
 
     private boolean isGuest(Authentication authentication) {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
     // given a player and pg id we look for the gp ids in the player if found one return true
+
     private boolean checkPlayerHasGamePlayerWithId(Player player, long gamePlayerId) {
 
         Optional<GamePlayer> any = player.getGamePlayers().stream()

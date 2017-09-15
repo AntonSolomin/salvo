@@ -17,18 +17,18 @@ public class GamePlayer {
 
     private boolean firstGamePlayer = false;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="game_id")
     private Game game;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="player_id")
     private Player player;
 
-    @OneToMany(mappedBy="gamePlayer", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="gamePlayer", fetch = FetchType.LAZY)
     private Set<Ship> ships = new HashSet<>();
 
-    @OneToMany(mappedBy="gamePlayer", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="gamePlayer", fetch = FetchType.LAZY)
     private Set<Salvo> salvos = new HashSet<>();
 
     private Date gamePlayerCreationDate;

@@ -12,11 +12,11 @@ public class Score {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long scoreId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="game_id")
     private Game game;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="player_id")
     private Player player;
 

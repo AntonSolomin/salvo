@@ -18,15 +18,13 @@ public class Player {
 
     private String password;
 
-    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy="player", fetch=FetchType.LAZY)
     private Set<GamePlayer> gamePlayers = new HashSet<>();
 
-    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy="player", fetch=FetchType.LAZY)
     private Set<Score> scores = new HashSet<>();
 
-    public Player() {
-
-    }
+    public Player() {}
 
     public Player(String firstName, String inputLastname, String inputUserName, String password) {
         this.firstName = firstName;

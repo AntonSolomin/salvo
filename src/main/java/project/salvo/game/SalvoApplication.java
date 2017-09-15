@@ -37,6 +37,12 @@ public class SalvoApplication {
         SpringApplication.run(SalvoApplication.class, args);
     }
 
+    //letting us and spring use the dbcache class
+    @Bean
+    public DBCache createDBCache () {
+        return new DBCache();
+    }
+
     @Bean
     public CommandLineRunner initData(PlayerRepository playerRepository,
                                       GameRepository gameRepository,

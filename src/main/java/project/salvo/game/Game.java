@@ -17,10 +17,10 @@ public class Game {
     private Date gameCreationDate;
     private boolean finished = false;
 
-    @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy="game", fetch=FetchType.LAZY)
     private Set<GamePlayer> gamePlayers = new HashSet<>();
 
-    @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy="game", fetch=FetchType.LAZY)
     private Set<Score> score = new HashSet<>();
 
     public Game () {
@@ -50,9 +50,11 @@ public class Game {
     public Date getGameCreationDate (){
         return gameCreationDate;
     }
+
     public void setGameCreationDate(Date gameCreationDate) {
         this.gameCreationDate = gameCreationDate;
     }
+
     public void addSeconds (int seconds) {
         this.gameCreationDate = gameCreationDate.from(gameCreationDate.toInstant().plusSeconds(seconds));
     }
@@ -68,6 +70,7 @@ public class Game {
     public Set<GamePlayer> getGamePlayers() {
         return gamePlayers;
     }
+
     public void setGamePlayers(Set<GamePlayer> gamePlayers) {
         this.gamePlayers = gamePlayers;
     }
