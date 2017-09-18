@@ -167,7 +167,7 @@ function logOut() {
 	$.post("/api/logout").done(function () {
 		$.getJSON("/api/games", onDataReady);
 
-		location.reload();
+		 
 	});
 }
 

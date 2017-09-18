@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
 
@@ -85,9 +86,14 @@ public class SalvoController {
 
         final Map<String, Object> finalDto = new LinkedHashMap<>();
 
-        final Player user = currentAuthenticatedUser(authentication);
+        final String user = currentAuthenticatedUserName(authentication);
+
         if (user != null) {
-            finalDto.put("user", makePlayerDto(user));
+            if (!dbCache.apiPlayer.containsKey(user)) {
+                Player player = playerRepository.findByUserName(user);
+                dbCache.apiPlayer.put(user, makePlayerDto(player));
+            }
+            finalDto.put("user", dbCache.apiPlayer.get(user));
         } else  {
             finalDto.put("user", "unidentified user");
         }
@@ -107,7 +113,6 @@ public class SalvoController {
         return finalDto;
     }
 
-    @Transactional
     @RequestMapping("/game_view/{gamePlayerId}")
     public ResponseEntity<Object> gameView(@PathVariable long gamePlayerId,
                                            Authentication authentication) {
@@ -135,8 +140,15 @@ public class SalvoController {
         // the current authed user
         final Player player = currentAuthenticatedUser(authentication);
 
+        boolean playderHasGamePlayer = false;
+        for (GamePlayer gamePlayer : player.getGamePlayers()) {
+            if (gamePlayerId == gamePlayer.getId()) {
+                playderHasGamePlayer = true;
+            }
+        }
+
         // check if he has id of the url in his set
-        if (player != null && checkPlayerHasGamePlayerWithId(player, gamePlayerId)) {
+        if (player != null && playderHasGamePlayer) {
             toReturn.put("id", currentGamePlayer.getGame().getGameId());
             toReturn.put("creation_date", currentGamePlayer.getGame().getGameCreationDate());
             final Map<Long, Object> playerSalvos = new LinkedHashMap<>();
@@ -513,13 +525,14 @@ public class SalvoController {
         if (isGuest(authentication)) {
             return null;
         }
+        return playerRepository.findByUserName(authentication.getName());
+    }
 
-        String key = authentication.getName();
-        if (!dbCache.apiPlayer.containsKey(key)) {
-            dbCache.apiPlayer.put(key, playerRepository.findByUserName(key));
+    private String currentAuthenticatedUserName (Authentication authentication) {
+        if (isGuest(authentication)) {
+            return null;
         }
-
-        return dbCache.apiPlayer.get(key);
+        return authentication.getName();
     }
 
     private boolean isGuest(Authentication authentication) {

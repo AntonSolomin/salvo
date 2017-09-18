@@ -9,7 +9,7 @@ public class DBCache {
 
     //games.html
     Map<String,Object> apiLeaderBoardDto;
-    Map<String,Player> apiPlayer = new HashMap<>();
+    Map<String,Map<String, Object>> apiPlayer = new HashMap<>();
     List<Object> apiGamesDto;
     boolean apiGamesResponseChanged = true;
 
